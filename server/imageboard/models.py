@@ -1,20 +1,20 @@
 from django.db import models
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, EmailValidator, URLValidator
 
 import os
 
-# Only technical admins can change data of these models
+from . import validators
 
-pass
+# Only technical admins can change data of these models
 
 # Public models
 
 class Board(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    abbr = models.CharField(max_length=10, unique=True, validators=[])
-    description = models.TextField(validators=[])
+    abbr = models.CharField(max_length=10, unique=True, validators=[validators.abbr_validator])
+    description = models.TextField()
     bump_limit = models.IntegerField(default=500)
-    spam_words = models.CharField(validators=[])
+    spam_words = models.CharField(validators=[validators.csv_validator])
     picture = models.ImageField(upload_to="board_avas/")
     # author
     created_at = models.DateTimeField(auto_now_add=True)
@@ -37,9 +37,9 @@ class Thread(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=200, blank=True)
-    author = models.CharField(max_length=100, blank=True)
-    contact = models.CharField(max_length=100, blank=True, validators=[])
-    options = models.ManyToManyField('PostOption', blank=True, related_name='options')
+    author = models.CharField(max_length=50, blank=True)
+    contact = models.CharField(max_length=100, blank=True, validators=[EmailValidator, URLValidator])
+    options = models.CharField(validators=[validators.csv_validator])
     message = models.TextField(max_length=15000)
     poster_ip = models.GenericIPAddressField()
     thread = models.ForeignKey('Thread', on_delete=models.CASCADE, related_name="threads")
@@ -52,13 +52,7 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         if self.thread.first_post is None:
             self.thread.first_post = self
-        super().save(*args, **kwargs)
-
-class PostOption(models.Model):
-    option = models.CharField(unique=True)
-
-    def __str__(self):
-        return self.option    
+        super().save(*args, **kwargs)   
 
 class PostFile(models.Model):
     ALLOWED_EXTENSIONS = [
