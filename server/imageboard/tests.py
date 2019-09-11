@@ -1,3 +1,129 @@
 from django.test import TestCase
 
-# Create your tests here.
+from . import models
+
+# Test public models
+
+class BoardTest(TestCase):
+    def create_board(self, name, abbr):
+        obj = models.Board.objects.create(
+            name=name,
+            abbr=abbr
+        )
+
+        return obj
+
+    def update_board(self, abbr, **kwargs):
+        obj = models.Board.objects.filter(abbr=abbr)[0]    
+        obj.description = kwargs.get('description', obj.description)
+        obj.bump_limit = kwargs.get('bump_limit', obj.bump_limit)
+        obj.spam_words = kwargs.get('spam_words', obj.spam_words)
+
+        obj.save()
+
+        return obj
+
+    def test_create_board(self):
+        obj = self.create_board('General', 'b')
+        self.assertEqual(obj.name, 'General')
+        self.assertEqual(obj.abbr, 'b')
+
+        print('Board created at: ' + str(obj.created_at))
+
+    def test_update_board(self):
+        self.create_board('General', 'b')
+        
+        obj = self.update_board(
+            'b',
+            description='The quick brown fox.', 
+            bump_limit=300,
+            spam_words='mlm,business,enlarge'
+        )
+
+        self.assertEqual(obj.description, 'The quick brown fox.')
+        self.assertEqual(obj.bump_limit, 300)
+        self.assertEqual(obj.spam_words, 'mlm,business,enlarge')
+        print('Board created at: ' + str(obj.created_at))
+        print('Board updated at: ' + str(obj.updated_at))
+
+
+class ThreadTest(TestCase):
+    def create_thread(self):
+        board = models.Board.objects.create(name='General', abbr='b')
+
+        obj = models.Thread.objects.create(board=board)
+
+        return obj
+    
+    def update_thread(self, id, **kwargs):
+        obj = models.Thread.objects.get(id=id)
+
+        obj.sticked = kwargs.get('sticked', obj.sticked)
+        obj.read_only = kwargs.get('read_only', obj.read_only)
+        obj.posts_count = kwargs.get('posts_count', obj.posts_count)
+
+        obj.save()
+
+        return obj
+
+    def test_create_thread(self):
+        obj = self.create_thread()
+        self.assertEqual(obj.id, 1)
+
+        print('Thread created at: ' + str(obj.created_at))
+
+    def test_update_thread(self):
+        self.create_thread()
+
+        obj = self.update_thread(
+            1,
+            sticked=True,
+            read_only=True,
+            posts_count=700
+        )
+
+        self.assertEqual(obj.sticked, True)
+        self.assertEqual(obj.read_only, True)
+        self.assertEqual(obj.posts_count, 700)
+        self.assertEqual(obj.has_bump_limit(), True)
+
+        print('Thread created at: ' + str(obj.created_at))
+        print('Thread updated at: ' + str(obj.updated_at))
+
+    
+class PostTest(TestCase):
+    def create_post(self, message, poster_ip, **kwargs):
+        board = models.Board.objects.create(name='General111', abbr='c')
+        thread = models.Thread.objects.create(board=board)
+
+        obj = models.Post.objects.create(
+            thread=thread,
+            message=message,
+            poster_ip=poster_ip,
+            title=kwargs.get('title', ''),
+            author=kwargs.get('author', ''),
+            contact=kwargs.get('contact', ''),
+            options=kwargs.get('options', '')
+        )
+
+        return obj
+
+    def update_post(self, id, **kwargs):
+        obj = models.Post.objects.get(id=id)
+
+        obj.message = kwargs.get('message', obj.message)
+
+        obj.save()
+
+        return obj
+
+    def test_create_post_basic(self):
+        message = 'The quick brown fox.'
+        poster_ip = '127.0.0.1'
+        
+        obj = self.create_post(message, poster_ip)
+        self.assertEqual(obj.message, message)
+        self.assertEqual(obj.poster_ip, poster_ip)
+        self.assertEqual(obj.title, message[:20])
+
+        print('Post created at: ' + str(obj.created_at))

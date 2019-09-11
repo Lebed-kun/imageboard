@@ -32,8 +32,11 @@ def min_max_validator(name, max_value=None, min_value=None, compare=(lambda a, b
 
 # Actual validators
 
-abbr_validator = lambda value : regex_validator('uri of board', ABBR_REGEX)(value)
-csv_validator = lambda value : regex_validator('list', CSV_REGEX)(value)
+def abbr_validator(value):
+    return regex_validator('uri of board', ABBR_REGEX)(value)
+
+def csv_validator(value):
+    return regex_validator('uri of board', CSV_REGEX)(value)
 
 def ava_validator(value):
     (errors, image_info) = ([], value.info()['image_info'])
