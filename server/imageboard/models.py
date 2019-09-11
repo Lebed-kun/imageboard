@@ -50,7 +50,7 @@ class Board(models.Model):
     description = models.TextField(blank=True)
     bump_limit = models.IntegerField(default=500)
     spam_words = models.CharField(blank=True, validators=[validators.csv_validator])
-    picture = models.ImageField(upload_to="board_avas/", null=True, blank=True)
+    picture = models.ImageField(upload_to="board_avas/", null=True, blank=True, validators=[validators.ava_validator])
     author = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
