@@ -3,7 +3,7 @@ import re
 from django.core.exceptions import ValidationError
 
 ABBR_REGEX = '[a-z]+'
-CSV_REGEX = '(\w+\,)+\w+'
+CSV_REGEX = '(\w+\,)*\w+'
 
 MIN_AVA_SIZE = 100
 MAX_AVA_SIZE = 500

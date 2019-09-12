@@ -61,6 +61,7 @@ class Thread(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     posts_count = models.IntegerField(default=0)
+    bumped = models.BooleanField(default=True)
 
     def __str__(self):
         if self.first_post is not None:
@@ -88,12 +89,17 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         if not self.thread.first_post and len(self.title) == 0:
             self.title = self.message[:20]
+        
         super().save(*args, **kwargs)
+        
         if not self.thread.first_post:
             self.thread.first_post = self
         self.thread.posts_count += 1
+        
+        options = self.options.split(',')
+        self.thread.bumped = not 'sage' in options 
+
         self.thread.save()
-        super().save(*args, **kwargs)
 
 @receiver(pre_delete, sender=Post, dispatch_uid='posts_count_decrease')
 def posts_count_decrease(sender, instance, using, **kwargs):

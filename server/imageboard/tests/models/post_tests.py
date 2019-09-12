@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from . import models
+from ... import models
 
 # Test public models
 
@@ -90,28 +90,33 @@ class ThreadTest(TestCase):
         print('Thread created at: ' + str(obj.created_at))
         print('Thread updated at: ' + str(obj.updated_at))
 
-    
+
 class PostTest(TestCase):
-    def create_post(self, message, poster_ip, **kwargs):
+    def create_posts(self, message, poster_ip, **kwargs):
         board = models.Board.objects.create(name='General111', abbr='c')
         thread = models.Thread.objects.create(board=board)
 
-        obj = models.Post.objects.create(
-            thread=thread,
-            message=message,
-            poster_ip=poster_ip,
-            title=kwargs.get('title', ''),
-            author=kwargs.get('author', ''),
-            contact=kwargs.get('contact', ''),
-            options=kwargs.get('options', '')
-        )
+        results = []
+        count = kwargs.get('count', 1)
 
-        return obj
+        for _ in range(count):
+            obj = models.Post.objects.create(
+                thread=thread,
+                message=message,
+                poster_ip=poster_ip,
+                title=kwargs.get('title', ''),
+                author=kwargs.get('author', ''),
+                contact=kwargs.get('contact', ''),
+                options=kwargs.get('options', '')
+            )
+            results.append(obj)
 
-    def update_post(self, id, **kwargs):
+        return results
+
+    def update_post(self, id, message):
         obj = models.Post.objects.get(id=id)
 
-        obj.message = kwargs.get('message', obj.message)
+        obj.message = message
 
         obj.save()
 
@@ -121,9 +126,66 @@ class PostTest(TestCase):
         message = 'The quick brown fox.'
         poster_ip = '127.0.0.1'
         
-        obj = self.create_post(message, poster_ip)
+        obj = self.create_posts(message, poster_ip)[0]
         self.assertEqual(obj.message, message)
         self.assertEqual(obj.poster_ip, poster_ip)
         self.assertEqual(obj.title, message[:20])
+        self.assertEqual(obj.thread.first_post, obj)
+        self.assertEqual(obj.thread.bumped, True)
 
         print('Post created at: ' + str(obj.created_at))
+
+    def test_create_multiple_posts(self):
+        message = 'The quick brown fox.'
+        poster_ip = '178.10.234.80'
+
+        results = self.create_posts(message, poster_ip, count=2)
+        
+        self.assertEqual(results[0].thread.first_post, results[0])
+        self.assertNotEqual(results[1].thread.first_post, results[1])
+
+    def test_create_post(self):
+        message = 'The quick brown fox.'
+        poster_ip = '178.10.234.80'
+        title = 'Hello'
+        author = 'JohnByte'
+        contact = 'test@example.com'
+        options = 'bump'
+
+        obj = self.create_posts(
+            message, 
+            poster_ip,
+            title=title,
+            author=author,
+            contact=contact,
+            options=options
+        )[0]
+        self.assertEqual(obj.message, message)
+        self.assertEqual(obj.poster_ip, poster_ip)
+        self.assertEqual(obj.title, title)
+        self.assertEqual(obj.author, author)
+        self.assertEqual(obj.contact, contact)
+        self.assertEqual(obj.options, options)
+        self.assertEqual(obj.thread.first_post, obj)
+
+        print('Post created at: ' + str(obj.created_at))
+
+    def test_create_post_sage(self):
+        message = 'The quick brown fox.'
+        poster_ip = '127.0.0.1'
+        
+        obj = self.create_posts(message, poster_ip, options='sage')[0]
+        self.assertEqual(obj.thread.bumped, False)
+
+        print('Post created at: ' + str(obj.created_at))
+
+    def test_update_post(self):
+        message = 'The quick brown fox.'
+        poster_ip = '127.0.0.1'
+        self.create_posts(message, poster_ip)
+
+        obj = self.update_post(1, 'Hello world')
+        self.assertEqual(obj.message, 'Hello world')
+
+        print('Post created at: ' + str(obj.created_at))
+        print('Post updated at: ' + str(obj.updated_at))
