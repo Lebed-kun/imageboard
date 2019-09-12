@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator, EmailValidator, URLValidator
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_delete
 from django.dispatch import receiver
 
 import os
@@ -109,7 +109,7 @@ def posts_count_decrease(sender, instance, using, **kwargs):
 
 class PostFile(models.Model):
     ALLOWED_EXTENSIONS = [
-        'jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm', 'pdf', 'djvu', 'mp3', 'ogg'
+        'jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm', 'pdf', 'djvu', 'mp3', 'ogg', 'txt'
     ]
     
     post_file = models.FileField(upload_to="post_files/", validators=[FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS)])
@@ -117,6 +117,11 @@ class PostFile(models.Model):
 
     def __str__(self):
         return os.path.basename(self.post_file.name) + ' : (' + str(self.post) + ')'
+
+@receiver(post_delete, sender=PostFile, dispatch_uid='post_file_delete')
+def post_file_delete(sender, instance, using, **kwargs):
+    if instance.post_file and os.path.isfile(instance.post_file.path):
+        os.remove(instance.post_file.path)
 
 class Report(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="report_posts")

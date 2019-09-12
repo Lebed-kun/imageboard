@@ -14,3 +14,7 @@ class ThreadAdmin(admin.ModelAdmin):
 @admin.register(models.Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'author', 'contact', 'options', 'thread', 'message')
+
+@admin.register(models.PostFile)
+class PostFileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'post_file')
