@@ -189,3 +189,6 @@ class PostTest(TestCase):
 
         print('Post created at: ' + str(obj.created_at))
         print('Post updated at: ' + str(obj.updated_at))
+
+# Done!
+# I tested PostFile manually
