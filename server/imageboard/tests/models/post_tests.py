@@ -113,10 +113,10 @@ class PostTest(TestCase):
 
         return results
 
-    def update_post(self, id, message):
+    def update_post(self, id, **kwargs):
         obj = models.Post.objects.get(id=id)
 
-        obj.message = message
+        obj.message = kwargs.get('message', obj.message)
 
         obj.save()
 
@@ -184,7 +184,7 @@ class PostTest(TestCase):
         poster_ip = '127.0.0.1'
         self.create_posts(message, poster_ip)
 
-        obj = self.update_post(1, 'Hello world')
+        obj = self.update_post(1, message='Hello world')
         self.assertEqual(obj.message, 'Hello world')
 
         print('Post created at: ' + str(obj.created_at))

@@ -44,9 +44,9 @@ class BanTest(TestCase):
         )
         return ban
 
-    def update_ban(self, expired_at):
+    def update_ban(self, **kwargs):
         ban = models.Ban.objects.get(id=1)
-        ban.expired_at = expired_at
+        ban.expired_at = kwargs.get('expired_at', ban.expired_at)
         ban.save()
         return ban
     
@@ -81,7 +81,7 @@ class BanTest(TestCase):
         self.create_ban(poster_ip, reason, expired_at, board)
 
         expired_at_new = '2019-09-20'
-        ban = self.update_ban(expired_at_new)
+        ban = self.update_ban(expired_at=expired_at_new)
         self.assertEqual(ban.expired_at, expired_at_new)
 
         print(ban.created_at)

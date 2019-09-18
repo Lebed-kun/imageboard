@@ -21,7 +21,7 @@ class UserGroup(models.Model):
     description = models.TextField(blank=True)
     priveleges = models.ManyToManyField('Privelege', related_name='priveleges', blank=True)
 
-    def __name__(self):
+    def __str__(self):
         return self.name
 
 class User(models.Model):
