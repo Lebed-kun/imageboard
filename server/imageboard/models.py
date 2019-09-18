@@ -27,9 +27,9 @@ class UserGroup(models.Model):
 class User(models.Model):
     name = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    pass_hash = models.CharField(max_length=100)
+    pass_hash = models.CharField(max_length=256)
     pass_salt = models.CharField(max_length=100)
-    pass_algo = models.CharField(max_length=10, choices=[])
+    pass_algo = models.CharField(max_length=10)
     group = models.ForeignKey('UserGroup', on_delete=models.SET_NULL, related_name='user_groups', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
