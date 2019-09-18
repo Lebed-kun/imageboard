@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from . import models
-# Register your models here.
+
+# Post models
 
 @admin.register(models.Board)
 class BoardAdmin(admin.ModelAdmin):
@@ -18,3 +19,27 @@ class PostAdmin(admin.ModelAdmin):
 @admin.register(models.PostFile)
 class PostFileAdmin(admin.ModelAdmin):
     list_display = ('id', 'post_file')
+
+# Moder models
+
+@admin.register(models.Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ('id', 'post', 'reason')
+
+@admin.register(models.Ban)
+class BanAdmin(admin.ModelAdmin):
+    list_display = ('id', 'poster_ip', 'expired_at', 'reason', 'board')
+
+# User models
+
+@admin.register(models.User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'email', 'group')
+
+@admin.register(models.UserGroup)
+class UserGroupAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+@admin.register(models.Privelege)
+class PrivelegeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
