@@ -29,7 +29,7 @@ class User(models.Model):
     email = models.EmailField(max_length=100, unique=True)
     pass_hash = models.CharField(max_length=256)
     pass_salt = models.CharField(max_length=100)
-    pass_algo = models.CharField(max_length=10)
+    pass_algo = models.CharField(max_length=100)
     group = models.ForeignKey('UserGroup', on_delete=models.SET_NULL, related_name='user_groups', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

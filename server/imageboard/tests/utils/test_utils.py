@@ -1,7 +1,7 @@
 import random
 from django.test import TestCase
 
-from ...utils import StringUtils, get_hash_pass
+from ...utils import StringUtils, PasswordUtils
 
 class StringUtilsTest(TestCase):
     def test_concat(self):
@@ -29,19 +29,27 @@ class StringUtilsTest(TestCase):
         self.assertEqual(len(result), 100)
         print(result)
 
-class GetHashPassTest(TestCase):
+class PasswordUtilsTest(TestCase):
     def test_get_hash_pass(self):
         algorithm_crypt = random.choice(['sha1', 'sha256', 'md5'])
         algorithm_string = random.choice(['concat', 'merge', 'concat_reverse', 'merge_reverse'])
         raw_password = StringUtils.random(10)
         salt = StringUtils.random()
 
-        password = get_hash_pass(algorithm_crypt, algorithm_string, raw_password, salt)
+        password = PasswordUtils.get_hash_pass(algorithm_crypt, algorithm_string, raw_password, salt)
 
         print('Crypt algorithm: ' + algorithm_crypt)
         print('String algorithm: ' + algorithm_string)
         print('Raw pass: ' + raw_password)
-        print('Salt: ' + salt + '\n')
-        print('Password: ' + password)
+        print('Salt: ' + salt)
+        print('Password: ' + password + '\n')
 
+    def test_get_password(self):
+        raw_password = StringUtils.random(10)
+        password_data = PasswordUtils.get_password(raw_password)
+
+        print('Raw password: ' + raw_password)
+        print('Password data: ' + str(password_data))
+
+# Done: StringUtils, PasswordUtils
 
