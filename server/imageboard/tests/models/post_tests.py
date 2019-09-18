@@ -192,3 +192,4 @@ class PostTest(TestCase):
 
 # Done!
 # I tested PostFile manually
+# I tested Board.picture manually

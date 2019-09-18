@@ -53,6 +53,11 @@ class Board(models.Model):
     def __str__(self):
         return self.abbr + ' : ' + self.name
 
+@receiver(post_delete, sender=Board, dispatch_uid='board_picture_delete')
+def board_picture_delete(sender, instance, using, **kwargs):
+    if instance.picture and os.path.isfile(instance.picture.path):
+        os.remove(instance.picture.path)
+
 class Thread(models.Model):
     sticked = models.BooleanField(default=False)
     read_only = models.BooleanField(default=False)

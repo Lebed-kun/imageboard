@@ -23,9 +23,9 @@ def regex_validator(name, regex):
 def min_max_validator(name, max_value=None, min_value=None, compare=(lambda a, b : a - b)):
     def validator(value):
         if max_value is not None and compare(value, max_value) > 0:
-            raise ValidationError(name + ' should be at most ' + max_value)
+            raise ValidationError(name + ' should be at most ' + str(max_value))
         if min_value is not None and compare(value, min_value) < 0:
-            raise ValidationError(name + ' should be at least ' + min_value)
+            raise ValidationError(name + ' should be at least ' + str(min_value))
 
         return value
     return validator
@@ -39,10 +39,8 @@ def csv_validator(value):
     return regex_validator('uri of board', CSV_REGEX)(value)
 
 def ava_validator(value):
-    (errors, image_info) = ([], value.info()['image_info'])
-
-    compareWidth = lambda value, border : value['width'] - border
-    compareHeight = lambda value, border : value['height'] - border
+    compareWidth = lambda value, border : value.width - border
+    compareHeight = lambda value, border : value.height - border
 
     width_validator = min_max_validator('width', MAX_AVA_SIZE, MIN_AVA_SIZE, compareWidth)
     height_validator = min_max_validator('height', MAX_AVA_SIZE, MIN_AVA_SIZE, compareHeight) 
