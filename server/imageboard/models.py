@@ -7,7 +7,7 @@ import os
 
 from . import validators
 
-# Only technical admins can change data of these models
+# User models
 
 class Privelege(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -37,7 +37,7 @@ class User(models.Model):
     def __str__(self):
         return self.name
 
-# Public models
+# Post models
 
 class Board(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -127,6 +127,8 @@ class PostFile(models.Model):
 def post_file_delete(sender, instance, using, **kwargs):
     if instance.post_file and os.path.isfile(instance.post_file.path):
         os.remove(instance.post_file.path)
+
+# Moder models
 
 class Report(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="report_posts")
