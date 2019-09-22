@@ -102,7 +102,8 @@ class Post(models.Model):
         self.thread.posts_count += 1
         
         options = self.options.split(',')
-        self.thread.bumped = not 'sage' in options 
+        self.thread.bumped = not 'sage' in options and not\
+            self.thread.has_bump_limit()
 
         self.thread.save()
 
