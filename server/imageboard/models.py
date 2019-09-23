@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator, EmailValidator, URLValidator
 from django.db.models.signals import pre_delete, post_delete
 from django.dispatch import receiver
+from datetime import datetime
 
 import os
 
@@ -65,8 +66,8 @@ class Thread(models.Model):
     board = models.ForeignKey('Board', on_delete=models.CASCADE, related_name='boards')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    bumped_at = models.DateTimeField(auto_now_add=True)
     posts_count = models.IntegerField(default=0)
-    bumped = models.BooleanField(default=True)
 
     def __str__(self):
         if self.first_post is not None:
@@ -102,8 +103,8 @@ class Post(models.Model):
         self.thread.posts_count += 1
         
         options = self.options.split(',')
-        self.thread.bumped = not 'sage' in options and not\
-            self.thread.has_bump_limit()
+        if not self.thread.has_bump_limit() and not 'sage' in options:
+            self.thread.bumped_at = datetime.now()
 
         self.thread.save()
 

@@ -1,5 +1,5 @@
 execute_test() {
-    python server/manage.py test imageboard.tests.$1.$2      
+    python server/manage.py test imageboard.tests.$1.$2   
 }
 
 source env/scripts/activate

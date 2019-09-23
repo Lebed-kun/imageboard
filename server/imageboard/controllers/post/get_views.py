@@ -5,8 +5,8 @@ from django.core.paginator import Paginator
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
-from .. import models
-from .. import constants
+from ... import models
+from ... import constants
 
 def get_post_data(post):
     data = {
@@ -30,7 +30,7 @@ def get_post_data(post):
 
 # Views
 
-def get_general_boards(self, request, *args, **kwargs):
+def get_general_boards(request, *args, **kwargs):
     if request.method == 'GET':
         boards = models.Board.objects.filter(author=None)
 
@@ -40,25 +40,25 @@ def get_general_boards(self, request, *args, **kwargs):
                 'name' : board.name,
                 'abbr' : board.abbr
             })
-            
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK, content_type='application/json')
     else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
-def get_last_updated_threads(self, request, abbr, *args, **kwargs):
+def get_last_updated_threads(request, abbr, *args, **kwargs):
     if request.method == 'GET':
         board = models.Board.objects.filter(abbr=abbr)
         if len(board) == 0:
             message = {
-                'message' : 'Board not found'
+                'message' : 'Board not found.'
             }
-            return Response(message, status=status.HTTP_404_NOT_FOUND)
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
         board = board[0]
 
         threads = models.Thread.objects.filter(board=board)
-        threads = threads.order_by('-bumped', '-updated_at')
+        threads = threads.order_by('-bumped_at')
 
-        paginator = Paginator(threads, constants.THREADS_PER_PAGE)
+        per_page = kwargs.get('per_page', constants.THREADS_PER_PAGE)
+        paginator = Paginator(threads, per_page)
         page = request.GET.get('page', 1)
         page = paginator.page(page)
 
@@ -71,8 +71,9 @@ def get_last_updated_threads(self, request, abbr, *args, **kwargs):
         }
         for thread in threads:
             first_post = thread.first_post
-            last_posts = models.Post.objects.filter(thread=thread)
-            last_posts = last_posts.order_by('-created_at')[:constants.LAST_POSTS_COUNT]
+            last_posts = models.Post.objects.filter(Q(thread=thread) & ~Q(id=first_post.id))
+            posts_count = kwargs.get('posts_count', constants.LAST_POSTS_COUNT)
+            last_posts = last_posts.order_by('-created_at')[:posts_count]
 
             thread_data = {
                 'sticked' : thread.sticked,
@@ -88,6 +89,31 @@ def get_last_updated_threads(self, request, abbr, *args, **kwargs):
             
             data['results'].append(thread_data)
         
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK, content_type='application/json')
     else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def get_posts_list(request, abbr, thread_id, *args, **kwargs):
+    if request.method == 'GET':
+        thread = None
+        try:
+            thread = models.Thread.objects.get(id=thread_id)
+        except models.Thread.DoesNotExist:
+            message = {
+                'message' : 'Thread not found.'
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+
+        posts = models.Post.objects.filter(thread=thread)
+
+        data = []
+        for post in posts:
+            post_data = get_post_data(post)
+            data.append(post_data)
+
+        return Response(data, status=status.HTTP_200_OK, content_type='application/json')
+    
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+        
