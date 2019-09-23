@@ -34,7 +34,7 @@ class BanAdmin(admin.ModelAdmin):
 
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'email', 'group')
+    list_display = ('id', 'name', 'email')
 
 @admin.register(models.UserGroup)
 class UserGroupAdmin(admin.ModelAdmin):

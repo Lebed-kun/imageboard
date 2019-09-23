@@ -21,6 +21,7 @@ class UserGroup(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
     priveleges = models.ManyToManyField('Privelege', related_name='priveleges', blank=True)
+    boards = models.ManyToManyField('Board', related_name='group_boards', blank=True)
 
     def __str__(self):
         return self.name
@@ -31,7 +32,7 @@ class User(models.Model):
     pass_hash = models.CharField(max_length=256)
     pass_salt = models.CharField(max_length=100)
     pass_algo = models.CharField(max_length=100)
-    group = models.ForeignKey('UserGroup', on_delete=models.SET_NULL, related_name='user_groups', null=True, blank=True)
+    groups = models.ManyToManyField('UserGroup', related_name='user_groups', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
