@@ -19,7 +19,7 @@
 Пользователи (зарегистрированные посетители) могут создавать свои доски, задавать им бамплимит и спам-слова, назначать на них администраторов и модераторов, банить пользователей;
 
 ## Модели
-<img src="./imageboard-models.png" />
+<img src="./Imageboard-models.png" />
 
 ## Сценарий постинга
-<img src="./imageboard-post-diagram.png" />
+<img src="./Imageboard-post-diagram.png" />
