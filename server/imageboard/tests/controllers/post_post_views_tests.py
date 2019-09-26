@@ -56,6 +56,12 @@ class CreatePostTest(TestCase):
             'thread' : thread
         })
 
+        ban = models.Ban.objects.create(**{
+            'poster_ip' : '130.56.80.78',
+            'expired_at' : '2020-01-01',
+            'reason' : 'Hello world'
+        })
+
     def test_success(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -77,6 +83,29 @@ class CreatePostTest(TestCase):
         self.assertEqual(response.data['message'], 'The quick brown fox.')
 
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
+
+    def test_fail(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'title' : 'Hello',
+            'author' : 'admin',
+            'contact' : 'test@example.ru',
+            'options' : 'bump,important',
+            'message' : 'The quick brown fox.'
+        })
+
+        response = post_views.create_post(request, 'b', 1, poster_ip='130.56.80.78')
+
+        self.assertEqual(response.data['banned'], True)
+        self.assertEqual(response.data['board'], '*')
+        self.assertEqual(response.data['reason'], 'Hello world')
+
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content_type, 'application/json')
 
         print(response.data)
