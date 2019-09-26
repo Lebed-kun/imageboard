@@ -117,7 +117,7 @@ def posts_count_decrease(sender, instance, using, **kwargs):
 
 class PostFile(models.Model):
     ALLOWED_EXTENSIONS = [
-        'jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm', 'pdf', 'djvu', 'mp3', 'ogg', 'txt'
+        'jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm', 'pdf', 'djvu', 'mp3', 'ogg'
     ]
     
     post_file = models.FileField(upload_to="post_files/", validators=[FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS)])

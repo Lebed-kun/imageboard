@@ -3,29 +3,30 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
 
 from ... import models
 from ... import constants
 
 def get_post_data(post):
     data = {
+        'id' : post.id,
         'title' : post.title,
         'author' : post.author,
         'contact' : post.contact,
         'options' : post.options,
         'message' : post.message,
         'created_at' : post.created_at,
-        'updated_at' : post.updated_at
+        'updated_at' : post.updated_at,
+        'files' : []
     }
+
     files = models.PostFile.objects.filter(post=post)
-    if len(files) > 0:
-        data['files'] = []
-        for post_file in files:
-            data['files'].append({
-                'name' : post_file.name,
-                'url' : post_file.url
-            })
+    for post_file in files:
+        data['files'].append({
+            'name' : post_file.name,
+            'url' : post_file.url
+        })
+    
     return data
 
 # Views
@@ -76,6 +77,7 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
             last_posts = last_posts.order_by('-created_at')[:posts_count]
 
             thread_data = {
+                'id' : thread.id,
                 'sticked' : thread.sticked,
                 'read_only' : thread.read_only,
                 'first_post' : get_post_data(first_post),
