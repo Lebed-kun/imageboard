@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.http import HttpRequest
+from django.http import HttpRequest, QueryDict
 from rest_framework.request import Request
 
 from ...controllers.post import post_views
@@ -59,14 +59,14 @@ class CreatePostTest(TestCase):
     def test_success(self):
         request = HttpRequest()
         request.method = 'POST'
-        request.POST = {
+        request = Request(request)
+        request.data.update({
             'title' : 'Hello',
             'author' : 'admin',
             'contact' : 'test@example.ru',
             'options' : 'bump,important',
             'message' : 'The quick brown fox.'
-        }
-        request = Request(request)
+        })
 
         response = post_views.create_post(request, 'b', 1, poster_ip='234.51.200.88')
 
@@ -80,5 +80,3 @@ class CreatePostTest(TestCase):
         self.assertEqual(response.content_type, 'application/json')
 
         print(response.data)
-
-        

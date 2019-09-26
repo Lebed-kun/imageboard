@@ -48,11 +48,11 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
             thread = models.Thread.objects.get(id=thread_id)
             
             data = {
-                'title' : request.POST.get('title', ''),
-                'author' : request.POST.get('author', ''),
-                'contact' : request.POST.get('contact', ''),
-                'options' : request.POST.get('options', ''),
-                'message' : request.POST.get('message'),
+                'title' : request.data.get('title', ''),
+                'author' : request.data.get('author', ''),
+                'contact' : request.data.get('contact', ''),
+                'options' : request.data.get('options', ''),
+                'message' : request.data.get('message'),
                 'poster_ip' : poster_ip,
                 'thread' : thread
             }
