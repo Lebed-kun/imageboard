@@ -71,7 +71,8 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
                 })
             
             del data['poster_ip']
-            data['created_at'] = post.created_at
+            data['thread'] = data['thread'].id
+            data['created_at'] = post.created_at.strftime('%d/%m/%Y %H:%M:%S')
 
             return Response(data, status=status.HTTP_201_CREATED, content_type='application/json')
     else:

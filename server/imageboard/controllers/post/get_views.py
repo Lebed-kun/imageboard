@@ -15,8 +15,8 @@ def get_post_data(post):
         'contact' : post.contact,
         'options' : post.options,
         'message' : post.message,
-        'created_at' : post.created_at,
-        'updated_at' : post.updated_at,
+        'created_at' : post.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+        'updated_at' : post.updated_at.strftime('%d/%m/%Y %H:%M:%S'),
         'files' : []
     }
 
