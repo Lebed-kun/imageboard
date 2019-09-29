@@ -126,6 +126,9 @@ class PostFile(models.Model):
     def __str__(self):
         return os.path.basename(self.post_file.name) + ' : (' + str(self.post) + ')'
 
+    def get_file_name(self):
+        return os.path.basename(self.post_file.name)
+
 @receiver(post_delete, sender=PostFile, dispatch_uid='post_file_delete')
 def post_file_delete(sender, instance, using, **kwargs):
     if instance.post_file and os.path.isfile(instance.post_file.path):

@@ -131,7 +131,6 @@ class PostTest(TestCase):
         self.assertEqual(obj.poster_ip, poster_ip)
         self.assertEqual(obj.title, message[:20])
         self.assertEqual(obj.thread.first_post, obj)
-        self.assertEqual(obj.thread.bumped, True)
 
         print('Post created at: ' + str(obj.created_at))
 
@@ -175,7 +174,6 @@ class PostTest(TestCase):
         poster_ip = '127.0.0.1'
         
         obj = self.create_posts(message, poster_ip, options='sage')[0]
-        self.assertEqual(obj.thread.bumped, False)
 
         print('Post created at: ' + str(obj.created_at))
 

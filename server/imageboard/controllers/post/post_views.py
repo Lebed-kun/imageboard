@@ -2,7 +2,9 @@ from django.db.models import F
 from rest_framework.response import Response
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.core.files.base import ContentFile
 from rest_framework import status
+import base64
 
 from ... import models
 from ... import constants
@@ -59,12 +61,13 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
             post = models.Post.objects.create(**data)
             
             data['files'] = []
-            files = request.FILES.getlist('files')
+            files = request.data.get('files')
             for f in files:
-                post_file = models.PostFile.objects.create(post_file=f, post=post)
+                file_data = ContentFile(base64.b64decode(f['content']), name=f['name'])
+                post_file = models.PostFile.objects.create(post_file=file_data, post=post)
                 data['files'].append({
-                    'name' : post_file.name,
-                    'url' : post_file.url
+                    'name' : post_file.get_file_name(),
+                    'url' : post_file.post_file.url
                 })
             
             del data['poster_ip']

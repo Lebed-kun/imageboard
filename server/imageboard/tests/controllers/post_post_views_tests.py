@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.http import HttpRequest, QueryDict
 from rest_framework.request import Request
+import base64
 
 from ...controllers.post import post_views
 from ... import models
@@ -72,6 +73,24 @@ class CreatePostTest(TestCase):
             'contact' : 'test@example.ru',
             'options' : 'bump,important',
             'message' : 'The quick brown fox.'
+        })
+
+        files = []
+        abs_path = "D:\\Docs\\projects\\imageboard\\server\\imageboard\\tests\\controllers\\files\\"
+        with open(abs_path + 'test1.jpg', mode="rb") as file1:
+            content = base64.b64encode(file1.read())
+            files.append({
+                'name' : 'test1.jpg',
+                'content' : content
+            })
+        with open(abs_path + 'test2.png', mode="rb") as file2:
+            content = base64.b64encode(file2.read())
+            files.append({
+                'name' : 'test2.png',
+                'content' : content
+            })
+        request.data.update({
+            'files' : files
         })
 
         response = post_views.create_post(request, 'b', 1, poster_ip='234.51.200.88')
