@@ -58,10 +58,28 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
                 'poster_ip' : poster_ip,
                 'thread' : thread
             }
+
+            files = request.data.get('files')
+
+            if len(files) > constants.MAX_FILES_COUNT:
+                message = {
+                    'message' : str(constants.MAX_FILES_COUNT) + ' files at most are allowed.'
+                }
+                return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+            files_size = 0
+            for f in files:
+                files_size += (len(f['content']) * (3 / 4)) - 2
+            if files_size > constants.MAX_FILES_SIZE:
+                message = {
+                    'message' : 'Files should be ' + str(constants.MAX_FILES_SIZE_MB) + \
+                        ' MB in size at most.'
+                }
+                return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
             post = models.Post.objects.create(**data)
             
             data['files'] = []
-            files = request.data.get('files')
             for f in files:
                 file_data = ContentFile(base64.b64decode(f['content']), name=f['name'])
                 post_file = models.PostFile.objects.create(post_file=file_data, post=post)
@@ -69,6 +87,7 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
                     'name' : post_file.get_file_name(),
                     'url' : post_file.post_file.url
                 })
+
             
             del data['poster_ip']
             data['thread'] = data['thread'].id
