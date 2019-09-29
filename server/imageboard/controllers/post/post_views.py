@@ -41,13 +41,20 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
             data = {
                 'banned' : True,
                 'board' : '*' if ban.board is None else ban.board.abbr,
-                'expired_at' : ban.expired_at,
+                'expired_at' : ban.expired_at.strftime('%d/%m/%Y %H:%M:%S'),
                 'reason' : ban.reason
             }
 
             return Response(data, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
         else:
-            thread = models.Thread.objects.get(id=thread_id)
+            thread = None
+            try:
+                thread = models.Thread.objects.get(id=thread_id)
+            except models.Thread.DoesNotExist:
+                message = {
+                    'message' : 'Thread not found.'
+                }
+                return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
             
             data = {
                 'title' : request.data.get('title', ''),
@@ -94,5 +101,34 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
             data['created_at'] = post.created_at.strftime('%d/%m/%Y %H:%M:%S')
 
             return Response(data, status=status.HTTP_201_CREATED, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def report_posts(request, abbr, thread_id, ids, *args, **kwargs):
+    if request.method == 'POST':
+        posts = []
+        try:
+            for id in ids:
+                post = models.Post.objects.get(id=id)
+                posts.append(post)
+        except models.Post.DoesNotExist:
+            message = {
+                'message' : 'Post not found.'
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+
+        data = {
+            'reason' : request.data.get('reason'),
+            'posts' : posts
+        }
+
+        for post in data['posts']:
+            models.Report.objects.create(post=post, reason=data['reason'])
+        
+        message = {
+            'message' : 'Report succeed.'
+        }
+
+        return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')

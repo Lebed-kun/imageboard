@@ -128,3 +128,61 @@ class CreatePostTest(TestCase):
         self.assertEqual(response.content_type, 'application/json')
 
         print(response.data)
+
+class ReportPostsTest(TestCase):
+    def setUp(self):
+        board = models.Board.objects.create(name='General', abbr='b')
+        thread = models.Thread.objects.create(board=board)
+        
+        post1 = models.Post.objects.create(**{
+            'thread' : thread,
+            'message' : 'The quick brown fox.',
+            'poster_ip' : '107.110.89.10'
+        })
+
+        post2 = models.Post.objects.create(**{
+            'thread' : thread,
+            'message' : 'The quick brown fox.666',
+            'poster_ip' : '110.60.11.56'
+        })
+
+        post3 = models.Post.objects.create(**{
+            'thread' : thread,
+            'message' : 'The quick brown fox.333',
+            'poster_ip' : '110.60.11.56'
+        })
+
+    def test_success(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'reason' : 'Gibberish.'
+        })
+        ids = [2, 3]
+
+        response = post_views.report_posts(request, 'b', 1, ids)
+
+        self.assertEqual(response.data['message'], 'Report succeed.')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
+
+    def test_fail(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'reason' : 'Gibberish.'
+        })
+        ids = [6]
+
+        response = post_views.report_posts(request, 'b', 1, ids)
+
+        self.assertEqual(response.data['message'], 'Post not found.')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
+
