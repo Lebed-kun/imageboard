@@ -7,7 +7,6 @@ import os
 from ...controllers.post import post_views
 from ... import models
 
-# Done!
 class IsVisitorBannedTest(TestCase):
     def setUp(self):
         board_b = models.Board.objects.create(name='General', abbr='b')
@@ -28,6 +27,7 @@ class IsVisitorBannedTest(TestCase):
         }
         global_ban = models.Ban.objects.create(**global_ban)
 
+    # Done!
     def test_local_banned(self):
         bans_mu = post_views.get_bans('23.224.100.128', 'mu')
         banned_mu = post_views.is_visitor_banned(bans_mu['global'], bans_mu['local'])
@@ -38,6 +38,7 @@ class IsVisitorBannedTest(TestCase):
         self.assertEqual(banned_mu, True)
         self.assertEqual(banned_b, False)
 
+    # Done!
     def test_global_banned(self):
         bans_mu = post_views.get_bans('100.1.200.11', 'mu')
         banned_mu = post_views.is_visitor_banned(bans_mu['global'], bans_mu['local'])
@@ -64,6 +65,7 @@ class CreatePostTest(TestCase):
             'reason' : 'Hello world'
         })
 
+    # Done!
     def test_success(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -107,6 +109,7 @@ class CreatePostTest(TestCase):
 
         print(response.data)
 
+    # Done!
     def test_fail(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -130,6 +133,7 @@ class CreatePostTest(TestCase):
 
         print(response.data)
 
+    # Done!
     def test_not_found(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -173,6 +177,7 @@ class ReportPostsTest(TestCase):
             'poster_ip' : '110.60.11.56'
         })
 
+    # Done!
     def test_success(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -190,6 +195,7 @@ class ReportPostsTest(TestCase):
 
         print(response.data)
 
+    # Done!
     def test_fail(self):
         request = HttpRequest()
         request.method = 'POST'

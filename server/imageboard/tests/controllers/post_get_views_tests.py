@@ -32,6 +32,7 @@ class GetGeneralBoardTest(TestCase):
         models.Board.objects.create(**board3)
         models.Board.objects.create(**board4)
 
+    # Done!
     def test_success(self):
         request = HttpRequest()
         request.method = 'GET'
@@ -59,6 +60,7 @@ class GetGeneralBoardTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
     def test_bad_request(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -140,6 +142,7 @@ class GetLastUpdatedThreads(TestCase):
         for post in posts:
             models.Post.objects.create(**post)
 
+    # Done!
     def test_success(self):
         request = HttpRequest()
         request.method = 'GET'
@@ -193,6 +196,30 @@ class GetLastUpdatedThreads(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
+    def test_success_search(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+        request.query_params.update({
+            'query' : 'world'
+        })
+
+        options = {
+            'per_page' : 2,
+            'posts_count' : 1
+        }
+        response = get_views.get_last_updated_threads(request, 'b', **options)
+
+        results = response.data['results'][0]
+        self.assertEqual(results['first_post']['title'], 'Hello world')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print('Queried threads:')
+        print(response.data['results'])
+
+    # Done!
     def test_board_not_found(self):
         request = HttpRequest()
         request.method = 'GET'
@@ -204,6 +231,7 @@ class GetLastUpdatedThreads(TestCase):
         self.assertEqual(response.data, {'message' : 'Board not found.'})
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
     def test_bad_request(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -224,6 +252,7 @@ class GetPostsListTest(TestCase):
         for post in posts:
             models.Post.objects.create(**post)
 
+    # Done!
     def get_posts_data(self, thread):
         posts = [
             {
@@ -249,6 +278,7 @@ class GetPostsListTest(TestCase):
 
         return posts
     
+    # Done!
     def test_success(self):
         request = HttpRequest()
         request.method = 'GET'
@@ -261,6 +291,7 @@ class GetPostsListTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
     def test_thread_not_found(self):
         request = HttpRequest()
         request.method = 'GET'
@@ -272,6 +303,7 @@ class GetPostsListTest(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
     def test_bad_request(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -281,5 +313,3 @@ class GetPostsListTest(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content_type, 'application/json')
-
-# Get posts tests done!

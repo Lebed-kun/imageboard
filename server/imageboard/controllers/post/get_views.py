@@ -58,6 +58,20 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
         threads = models.Thread.objects.filter(board=board)
         threads = threads.order_by('-bumped_at')
 
+        query = request.GET.get('query', None)
+        query_threads = []
+        if query is not None:
+            query = query.split('+')
+            for thread in threads:
+                posts = models.Post.objects.filter(thread=thread)
+                condition = Q(title__iregex='(' + '|'.join(query) + ')')
+                posts = posts.filter(condition)
+                if len(posts) > 0:
+                    query_threads.append(posts[0].thread)
+        
+        if len(query_threads) > 0:
+            threads = query_threads
+
         per_page = kwargs.get('per_page', constants.THREADS_PER_PAGE)
         paginator = Paginator(threads, per_page)
         page = request.GET.get('page', 1)
