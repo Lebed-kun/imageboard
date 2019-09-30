@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.http import HttpRequest, QueryDict
 from rest_framework.request import Request
 import base64
+import os
 
 from ...controllers.post import post_views
 from ... import models
@@ -76,7 +77,7 @@ class CreatePostTest(TestCase):
         })
 
         files = []
-        abs_path = "D:\\Docs\\projects\\imageboard\\server\\imageboard\\tests\\controllers\\files\\"
+        abs_path = os.path.dirname(os.path.realpath(__file__)) + '\\files\\'
         with open(abs_path + 'test1.jpg', mode="rb") as file1:
             content = base64.b64encode(file1.read())
             files.append({
