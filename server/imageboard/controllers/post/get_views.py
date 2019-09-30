@@ -23,13 +23,15 @@ def get_post_data(post):
     files = models.PostFile.objects.filter(post=post)
     for post_file in files:
         data['files'].append({
-            'name' : post_file.name,
-            'url' : post_file.url
+            'name' : post_file.post_file.get_file_name(),
+            'url' : post_file.post_file.url
         })
     
     return data
 
 # Views
+
+# General
 
 def get_general_boards(request, *args, **kwargs):
     if request.method == 'GET':
@@ -58,9 +60,10 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
         threads = models.Thread.objects.filter(board=board)
         threads = threads.order_by('-bumped_at')
 
-        query = request.GET.get('query', None)
-        query_threads = []
+        query = request.query_params.get('query', None)
+        query_threads = None
         if query is not None:
+            query_threads = []
             query = query.split('+')
             for thread in threads:
                 posts = models.Post.objects.filter(thread=thread)
@@ -69,12 +72,12 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
                 if len(posts) > 0:
                     query_threads.append(posts[0].thread)
         
-        if len(query_threads) > 0:
+        if query_threads is not None:
             threads = query_threads
 
         per_page = kwargs.get('per_page', constants.THREADS_PER_PAGE)
         paginator = Paginator(threads, per_page)
-        page = request.GET.get('page', 1)
+        page = request.query_params.get('page', 1)
         page = paginator.page(page)
 
         threads = page.object_list
@@ -132,4 +135,34 @@ def get_posts_list(request, abbr, thread_id, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
-        
+# User boards
+
+def get_user_boards(request, *args, **kwargs):
+    if request.method == 'GET':
+        boards = models.Board.objects.exclude(author=None).order_by('-created_at')
+
+        per_page = kwargs.get('per_page', constants.BOARDS_PER_PAGE)
+        paginator = Paginator(boards, per_page)
+        page = request.query_params.get('page', 1)
+        page = paginator.page(page)
+
+        boards = page.object_list
+        data = {
+            'pages_count' : paginator.num_pages,
+            'prev_page' : page.previous_page_number() if page.has_previous() else None,
+            'next_page' : page.next_page_number() if page.has_next() else None,
+            'results' : []
+        }
+        for board in boards:
+            board_data = {
+                'name' : board.name,
+                'abbr' : board.abbr,
+                'description' : board.description,
+                'picture' : board.picture.url if board.picture else None,
+                'author' : board.author.name
+            }
+            data['results'].append(board_data)
+
+        return Response(data, status=status.HTTP_200_OK, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')

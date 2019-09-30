@@ -4,6 +4,7 @@ from rest_framework.request import Request
 
 from ...controllers.post import get_views
 from ... import models
+from ...utils import PasswordUtils
 
 class GetGeneralBoardTest(TestCase):
     def setUp(self):
@@ -313,3 +314,55 @@ class GetPostsListTest(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content_type, 'application/json')
+
+class GetUserBoardsTest(TestCase):
+    def setUp(self):
+        password = PasswordUtils.get_password('123456')
+        
+        user1 = models.User.objects.create(**{
+            'name' : 'JohnByte',
+            'email' : 'test@example.com',
+            'pass_hash' : password['pass_hash'],
+            'pass_salt' : password['pass_salt'],
+            'pass_algo' : password['pass_algo']
+        })
+
+        user2 = models.User.objects.create(**{
+            'name' : 'Chihiro',
+            'email' : 'chihiro@example.com',
+            'pass_hash' : password['pass_hash'],
+            'pass_salt' : password['pass_salt'],
+            'pass_algo' : password['pass_algo']
+        })
+
+        board1 = models.Board.objects.create(**{
+            'name' : 'Golang',
+            'abbr' : 'go',
+            'author' : user1
+        })
+
+        board2 = models.Board.objects.create(**{
+            'name' : 'Computer science',
+            'abbr' : 'cs',
+            'author' : user2
+        })
+
+        board3 = models.Board.objects.create(**{
+            'name' : 'Bondage',
+            'abbr' : 'bndg',
+            'author' : user1
+        })
+
+    def test_success(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+
+        response = get_views.get_user_boards(request, per_page=2)
+
+        self.assertEqual(response.data['pages_count'], 2)
+        self.assertEqual(response.data['prev_page'], None)
+        self.assertEqual(response.data['next_page'], 2)
+        self.assertEqual(len(response.data['results']), 2)
+
+        print(response.data)
