@@ -213,3 +213,75 @@ class ReportPostsTest(TestCase):
 
         print(response.data)
 
+class CreateThreadTest(TestCase):
+    def setUp(self):
+        board = models.Board.objects.create(name='Anime', abbr='a')
+        ban = models.Ban.objects.create(**{
+            'poster_ip' : '133.102.87.45',
+            'expired_at' : '2021-09-01',
+            'reason' : 'Gibberish.'
+        })
+
+    def test_success(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'title' : 'Hello',
+            'author' : 'admin',
+            'contact' : 'test@example.ru',
+            'options' : 'bump,important',
+            'message' : 'The quick brown fox.'
+        })
+
+        response = post_views.create_thread(request, 'a', poster_ip='200.90.12.138')
+
+        self.assertEqual(response.data['created'], True)
+        self.assertEqual(response.data['id'], 1)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
+
+    def test_not_found(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'title' : 'Hello',
+            'author' : 'admin',
+            'contact' : 'test@example.ru',
+            'options' : 'bump,important',
+            'message' : 'The quick brown fox.'
+        })
+
+        response = post_views.create_thread(request, 'y', poster_ip='200.90.12.138')
+
+        self.assertEqual(response.data['message'], 'Board not found.')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
+
+    def test_banned(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'title' : 'Hello',
+            'author' : 'admin',
+            'contact' : 'test@example.ru',
+            'options' : 'bump,important',
+            'message' : 'The quick brown fox.'
+        })
+
+        response = post_views.create_thread(request, 'a', poster_ip='133.102.87.45')
+
+        self.assertEqual(response.data['banned'], True)
+        self.assertEqual(response.data['board'], '*')
+        self.assertEqual(response.data['reason'], 'Gibberish.')
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)

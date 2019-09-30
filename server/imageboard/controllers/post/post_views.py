@@ -66,7 +66,7 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
                 'thread' : thread
             }
 
-            files = request.data.get('files')
+            files = request.data.get('files', [])
 
             if len(files) > constants.MAX_FILES_COUNT:
                 message = {
@@ -130,5 +130,43 @@ def report_posts(request, abbr, thread_id, ids, *args, **kwargs):
         }
 
         return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def create_thread(request, abbr, *args, **kwargs):
+    if request.method == 'POST':
+        board = models.Board.objects.filter(abbr=abbr)
+        if len(board) < 1:
+            message = {
+                'message' : 'Board not found.'
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+        board = board[0]
+
+        poster_ip = kwargs.get('poster_ip', get_visitor_ip(request))
+        bans = get_bans(poster_ip, abbr)
+        banned = is_visitor_banned(bans['global'], bans['local'])
+
+        if banned:
+            ban = bans['local'] if bans['global'] is None else bans['global']
+
+            data = {
+                'banned' : True,
+                'board' : '*' if ban.board is None else ban.board.abbr,
+                'expired_at' : ban.expired_at.strftime('%d/%m/%Y %H:%M:%S'),
+                'reason' : ban.reason
+            }
+
+            return Response(data, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+        
+        thread = models.Thread.objects.create(board=board)
+        create_post(request, abbr, thread.id, *args, **kwargs)
+
+        data = {
+            'created' : True,
+            'id' : thread.id
+        }
+
+        return Response(data, status=status.HTTP_201_CREATED, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
