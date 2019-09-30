@@ -1,6 +1,6 @@
 import re
-
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 ABBR_REGEX = '[a-z]+'
 CSV_REGEX = '(\w+\,)*\w+'
@@ -12,7 +12,7 @@ MAX_AVA_SIZE = 500
 
 def regex_validator(name, regex):
     def validator(value):
-        match = re.match(regex, value)
+        match = re.match('^' + regex + '$', value)
 
         if not match:
             raise ValidationError('Invalid ' + name)
@@ -50,3 +50,15 @@ def ava_validator(value):
 
     if width and height:
         return value
+
+def exp_date_validator(value):
+    def comparator(a, b):
+        if a < b:
+            return -1
+        elif a > b:
+            return 1
+        else:
+            return 0
+
+    validator = min_max_validator('expiration date', min_value=datetime.now(), compare=comparator)
+    return validator(value)
