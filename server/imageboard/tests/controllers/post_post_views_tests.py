@@ -130,6 +130,26 @@ class CreatePostTest(TestCase):
 
         print(response.data)
 
+    def test_not_found(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'title' : 'Hello',
+            'author' : 'admin',
+            'contact' : 'test@example.ru',
+            'options' : 'bump,important',
+            'message' : 'The quick brown fox.'
+        })
+
+        response = post_views.create_post(request, 'b', 5, poster_ip='130.56.80.78')
+
+        self.assertEqual(response.data['message'], 'Thread not found.')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
+
 class ReportPostsTest(TestCase):
     def setUp(self):
         board = models.Board.objects.create(name='General', abbr='b')

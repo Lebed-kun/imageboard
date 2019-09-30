@@ -31,6 +31,15 @@ def is_visitor_banned(global_ban, local_ban):
 # Posting create views
 def create_post(request, abbr, thread_id, *args, **kwargs):
     if request.method == 'POST':
+        thread = None
+        try:
+            thread = models.Thread.objects.get(id=thread_id)
+        except models.Thread.DoesNotExist:
+            message = {
+                'message' : 'Thread not found.'
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+
         poster_ip = kwargs.get('poster_ip', get_visitor_ip(request))
         bans = get_bans(poster_ip, abbr)
         banned = is_visitor_banned(bans['global'], bans['local'])
@@ -47,15 +56,6 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
 
             return Response(data, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
         else:
-            thread = None
-            try:
-                thread = models.Thread.objects.get(id=thread_id)
-            except models.Thread.DoesNotExist:
-                message = {
-                    'message' : 'Thread not found.'
-                }
-                return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
-            
             data = {
                 'title' : request.data.get('title', ''),
                 'author' : request.data.get('author', ''),
