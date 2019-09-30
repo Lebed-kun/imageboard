@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.core.files.base import ContentFile
 from rest_framework import status
 import base64
+from datetime import datetime, timezone
 
 from ... import models
 from ... import constants
@@ -20,10 +21,18 @@ def get_bans(visitor_ip, abbr):
     ban = models.Ban.objects.filter(poster_ip=visitor_ip, board=None)
     global_ban = ban[0] if len(ban) != 0 else None
 
-    return {
-        'global' : global_ban,
-        'local' : local_ban
-    }
+    result = {}
+    result['local'] = local_ban if local_ban is not None and\
+        local_ban.expired_at >= datetime.now(timezone.utc) else None
+    result['global'] = global_ban if global_ban is not None and\
+        global_ban.expired_at >= datetime.now(timezone.utc) else None
+
+    if local_ban is not None and result['local'] is None:
+        models.Ban.objects.delete(id=local_ban.id)
+    if global_ban is not None and result['global'] is None:
+        models.Ban.objects.delete(id=global_ban.id)
+
+    return result
 
 def is_visitor_banned(global_ban, local_ban):
     return global_ban is not None or local_ban is not None

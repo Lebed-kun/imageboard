@@ -148,7 +148,7 @@ class Ban(models.Model):
     poster_ip = models.GenericIPAddressField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    expired_at = models.DateTimeField()
+    expired_at = models.DateTimeField(validators=[validators.exp_date_validator])
     reason = models.TextField(max_length=200)
     board = models.ForeignKey('Board', on_delete=models.CASCADE, related_name="ban_boards", null=True, blank=True)
 
