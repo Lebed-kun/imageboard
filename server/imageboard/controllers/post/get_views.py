@@ -139,7 +139,7 @@ def get_posts_list(request, abbr, thread_id, *args, **kwargs):
 
 def get_user_boards(request, *args, **kwargs):
     if request.method == 'GET':
-        boards = models.Board.objects.exclude(author=None).order_by('-created_at')
+        boards = models.Board.objects.filter(author__isnull=False).order_by('-created_at')
 
         per_page = kwargs.get('per_page', constants.BOARDS_PER_PAGE)
         paginator = Paginator(boards, per_page)
@@ -159,7 +159,9 @@ def get_user_boards(request, *args, **kwargs):
                 'abbr' : board.abbr,
                 'description' : board.description,
                 'picture' : board.picture.url if board.picture else None,
-                'author' : board.author.name
+                'author' : board.author.name,
+                'created_at' : board.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+                'updated_at' : board.updated_at.strftime('%d/%m/%Y %H:%M:%S')
             }
             data['results'].append(board_data)
 

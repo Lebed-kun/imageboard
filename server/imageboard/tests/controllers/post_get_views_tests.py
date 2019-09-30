@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.http import HttpRequest
 from rest_framework.request import Request
+import time
 
 from ...controllers.post import get_views
 from ... import models
@@ -341,11 +342,15 @@ class GetUserBoardsTest(TestCase):
             'author' : user1
         })
 
+        time.sleep(1)
+
         board2 = models.Board.objects.create(**{
             'name' : 'Computer science',
             'abbr' : 'cs',
             'author' : user2
         })
+
+        time.sleep(1)
 
         board3 = models.Board.objects.create(**{
             'name' : 'Bondage',
@@ -353,6 +358,7 @@ class GetUserBoardsTest(TestCase):
             'author' : user1
         })
 
+    # Done!
     def test_success(self):
         request = HttpRequest()
         request.method = 'GET'
