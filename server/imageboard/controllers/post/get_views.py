@@ -58,7 +58,7 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
         board = board[0]
 
         threads = models.Thread.objects.filter(board=board)
-        threads = threads.order_by('-bumped_at')
+        threads = threads.order_by('-sticked', '-bumped_at')
 
         query = request.query_params.get('query', None)
         query_threads = None

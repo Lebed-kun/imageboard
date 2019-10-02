@@ -27,3 +27,6 @@
 
 ## Сценарий постинга
 <img src="./Imageboard-post-diagram.png" />
+
+## Сценарий модерации
+<img src="./Imageboard-moder-diagram.png" />
