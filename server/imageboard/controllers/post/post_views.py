@@ -49,6 +49,12 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
             }
             return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
 
+        if thread.read_only:
+            message = {
+                'message' : 'Thread is read only!'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
         poster_ip = kwargs.get('poster_ip', get_visitor_ip(request))
         bans = get_bans(poster_ip, abbr)
         banned = is_visitor_banned(bans['global'], bans['local'])

@@ -65,6 +65,13 @@ class CreatePostTest(TestCase):
             'reason' : 'Hello world'
         })
 
+        thread_ro = models.Thread.objects.create(board=board, read_only=True)
+        first_post_ro = models.Post.objects.create(**{
+            'message' : 'Hello world!',
+            'poster_ip' : '100.32.66.120',
+            'thread' : thread_ro
+        })
+
     # Done!
     def test_success(self):
         request = HttpRequest()
@@ -153,6 +160,24 @@ class CreatePostTest(TestCase):
         self.assertEqual(response.content_type, 'application/json')
 
         print(response.data)
+
+    def test_read_only(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'title' : 'Hello',
+            'author' : 'admin',
+            'contact' : 'test@example.ru',
+            'options' : 'bump,important',
+            'message' : 'The quick brown fox.'
+        })
+
+        response = post_views.create_post(request, 'b', 2, poster_ip='234.51.200.88')
+
+        self.assertEqual(response.data['message'], 'Thread is read only!')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, 'application/json')
 
 class ReportPostsTest(TestCase):
     def setUp(self):
