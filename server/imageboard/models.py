@@ -158,4 +158,12 @@ class Ban(models.Model):
             board = '(' + str(self.board) + ')'
         return board + ' : ' + self.poster_ip + ' : ' + self.reason[:20]
 
+# Requests
 
+class Requests(models.Model):
+    subject = models.CharField(max_length=200)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject[:20] + ' : ' + self.text[:20]

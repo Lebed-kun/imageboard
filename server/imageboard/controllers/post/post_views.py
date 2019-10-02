@@ -179,3 +179,14 @@ def create_thread(request, abbr, *args, **kwargs):
         return Response(data, status=status.HTTP_201_CREATED, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def send_request_board(request, *args, **kwargs):
+    if request.method == 'POST':
+        subject = request.data['subject']
+        text = request.data['text']
+        
+        board_request = models.Requests.objects.create(subject=subject, text=text)
+
+        return Response(status=status.HTTP_201_CREATED, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')

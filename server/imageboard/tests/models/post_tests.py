@@ -189,5 +189,18 @@ class PostTest(TestCase):
         print('Post updated at: ' + str(obj.updated_at))
 
 # Done!
+class RequestTest(TestCase):
+    def test(self):
+        subject = 'Add board'
+        text = '/yaoi/ pwease :3'
+
+        request = models.Requests.objects.create(subject=subject, text=text)
+
+        self.assertEqual(request.subject, subject)
+        self.assertEqual(request.text, text)
+
+        print(request)
+
+# Done!
 # I tested PostFile manually
 # I tested Board.picture manually

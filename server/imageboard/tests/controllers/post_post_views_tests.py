@@ -285,3 +285,20 @@ class CreateThreadTest(TestCase):
         self.assertEqual(response.content_type, 'application/json')
 
         print(response.data)
+
+class SendRequestBoardTest(TestCase):
+    def test(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'subject' : 'Add board',
+            'text' : '/yaoi/ pwease :3'
+        })
+
+        response = post_views.send_request_board(request)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content_type, 'application/json')
+
+        

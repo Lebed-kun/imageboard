@@ -43,3 +43,7 @@ class UserGroupAdmin(admin.ModelAdmin):
 @admin.register(models.Privelege)
 class PrivelegeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
+
+@admin.register(models.Requests)
+class RequestsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'subject', 'text', 'created_at')
