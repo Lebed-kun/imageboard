@@ -136,3 +136,6 @@ class UserTokenTest(TestCase):
 
         self.assertEqual(user1.is_authorized(), False)
         self.assertEqual(user2.is_authorized(), False)
+        
+        user2 = User.objects.filter(name='John111')[0]
+        self.assertEqual(user2.token, None)

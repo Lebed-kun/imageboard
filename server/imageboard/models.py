@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator, EmailValidator, URLValidator
 from django.db.models.signals import pre_delete, post_delete
 from django.dispatch import receiver
-from datetime import datetime
+from datetime import datetime, timezone
 
 import os
 
@@ -50,7 +50,10 @@ class User(models.Model):
 
     def is_authorized(self):
         has_token = self.token is not None
-        token_not_expired = has_token and datetime.now() <= self.token.expired_at
+        token_not_expired = has_token and datetime.now(timezone.utc) < self.token.expired_at
+
+        if has_token and not token_not_expired:
+            self.token.delete()
 
         return token_not_expired 
 
