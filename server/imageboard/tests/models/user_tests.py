@@ -1,7 +1,8 @@
 from django.test import TestCase
+from datetime import datetime
 
-from ...utils import PasswordUtils
-from ...models import User, UserGroup, Privelege
+from ...utils import PasswordUtils, StringUtils
+from ...models import User, UserGroup, Privelege, UserToken
 
 class UserTest(TestCase):
     def create_user(self, name, email, password, groups=[]):
@@ -67,3 +68,71 @@ class UserTest(TestCase):
         
         print(user.created_at)
         print(user.updated_at)
+
+class UserTokenTest(TestCase):
+    def setUp(self):
+        pass_data1 = PasswordUtils.get_password('qwertyuiop')
+        pass_data2 = PasswordUtils.get_password('123456')
+
+        user1 = User.objects.create(**{
+            'name' : 'JohnByte',
+            'email' : 'test@example.com',
+            'pass_hash' : pass_data1['pass_hash'],
+            'pass_salt' : pass_data1['pass_salt'],
+            'pass_algo' : pass_data1['pass_algo']
+        })
+
+        user2 = User.objects.create(**{
+            'name' : 'John666',
+            'email' : 'test666@example.com',
+            'pass_hash' : pass_data2['pass_hash'],
+            'pass_salt' : pass_data2['pass_salt'],
+            'pass_algo' : pass_data2['pass_algo']
+        })
+
+        user3 = User.objects.create(**{
+            'name' : 'John111',
+            'email' : 'test111@example.com',
+            'pass_hash' : pass_data2['pass_hash'],
+            'pass_salt' : pass_data2['pass_salt'],
+            'pass_algo' : pass_data2['pass_algo']
+        })
+
+    def create_token(self, expired_at, ip):
+        value = StringUtils.random()
+
+        user_token = UserToken.objects.create(**{
+            'value' : value,
+            'expired_at' : expired_at,
+            'ip' : ip
+        })
+
+        return user_token
+
+    def test_create_token(self):
+        expired_at = datetime(2020, 1, 1)
+        ip = '123.40.45.8'
+
+        user_token = self.create_token(expired_at, ip)
+
+        self.assertEqual(user_token.expired_at, expired_at)
+        self.assertEqual(user_token.ip, ip)
+
+    def test_user_authorized(self):
+        user_token = self.create_token(datetime(2020, 1, 1), '190.100.8.32')
+        
+        user = User.objects.filter(name='JohnByte')[0]
+        user.token = user_token
+        user.save()
+
+        self.assertEqual(user.is_authorized(), True)
+
+    def test_user_not_authorized(self):
+        user1 = User.objects.filter(name='John666')[0]
+
+        user2 = User.objects.filter(name='John111')[0]
+        user2.token = self.create_token(datetime(2019, 3, 1), '156.80.100.100')
+        user2.save()
+
+        self.assertEqual(user1.is_authorized(), False)
+        self.assertEqual(user2.is_authorized(), False)

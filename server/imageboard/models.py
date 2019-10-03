@@ -26,6 +26,14 @@ class UserGroup(models.Model):
     def __str__(self):
         return self.name
 
+class UserToken(models.Model):
+    value = models.CharField(max_length=250)
+    expired_at = models.DateTimeField()
+    ip = models.GenericIPAddressField(default='0.0.0.0', unique=True)
+
+    def __str__(self):
+        return self.value
+
 class User(models.Model):
     name = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
@@ -33,11 +41,18 @@ class User(models.Model):
     pass_salt = models.CharField(max_length=100)
     pass_algo = models.CharField(max_length=100)
     groups = models.ManyToManyField('UserGroup', related_name='user_groups', blank=True)
+    token = models.OneToOneField('UserToken', on_delete=models.SET_NULL, related_name='user_tokens', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+
+    def is_authorized(self):
+        has_token = self.token is not None
+        token_not_expired = has_token and datetime.now() <= self.token.expired_at
+
+        return token_not_expired 
 
 # Post models
 
