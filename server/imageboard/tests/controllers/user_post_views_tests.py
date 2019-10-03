@@ -58,4 +58,56 @@ class IsUserAuthorizedTest(TestCase):
     def test_expired_token(self):
         is_authorized = post_views.is_user_authorized('100.200.10.11')
         self.assertEqual(is_authorized, False)
-    
+
+class DoesUserExistTest(TestCase):
+    def setUp(self):
+        user1 = self.create_user('John', 'john@example.com', '12345678')
+
+    def create_user(self, name, email, password):
+        pass_data = PasswordUtils.get_password(password)
+        data = {
+            'name' : name,
+            'email' : email,
+            'pass_hash' : pass_data['pass_hash'],
+            'pass_salt' : pass_data['pass_salt'],
+            'pass_algo' : pass_data['pass_algo']
+        }
+
+        user = models.User.objects.create(**data)
+
+        return user
+
+    def test(self):
+        user1_exists_name = post_views.does_user_exist('John')
+        user1_exists_email = post_views.does_user_exist('john@example.com')
+        user2_exists = post_views.does_user_exist('Emill')
+
+        self.assertEqual(user1_exists_email, True)
+        self.assertEqual(user1_exists_name, True)
+        self.assertEqual(user2_exists, False)
+
+class IsPasswordCorrectTest(TestCase):
+    def setUp(self):
+        user1 = self.create_user('John', 'john@example.com', '12345678')
+
+    def create_user(self, name, email, password):
+        pass_data = PasswordUtils.get_password(password)
+        data = {
+            'name' : name,
+            'email' : email,
+            'pass_hash' : pass_data['pass_hash'],
+            'pass_salt' : pass_data['pass_salt'],
+            'pass_algo' : pass_data['pass_algo']
+        }
+
+        user = models.User.objects.create(**data)
+
+        return user
+
+    def test_success(self):
+        correct = post_views.is_password_correct('John', '12345678')
+        self.assertEqual(correct, True)
+
+    def test_fail(self):
+        correct = post_views.is_password_correct('John', '12345679')
+        self.assertEqual(correct, False)

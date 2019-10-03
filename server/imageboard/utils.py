@@ -58,8 +58,8 @@ class PasswordUtils:
     }
 
     @staticmethod
-    def get_hash_pass(algorithm_crypt, alogorithm_string, raw_password, salt):
-        scrambled_password = PasswordUtils.STRING_ALGORITHMS[alogorithm_string](raw_password, salt)
+    def get_hash_pass(algorithm_crypt, algorithm_string, raw_password, salt):
+        scrambled_password = PasswordUtils.STRING_ALGORITHMS[algorithm_string](raw_password, salt)
         scrambled_password = scrambled_password.encode('utf-8')
 
         if algorithm_crypt == 'sha1':
