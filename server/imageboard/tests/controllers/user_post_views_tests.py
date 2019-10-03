@@ -111,3 +111,110 @@ class IsPasswordCorrectTest(TestCase):
     def test_fail(self):
         correct = post_views.is_password_correct('John', '12345679')
         self.assertEqual(correct, False)
+
+class AuthorizeTest(TestCase):
+    def create_user(self, name, email, password):
+        pass_data = PasswordUtils.get_password(password)
+        data = {
+            'name' : name,
+            'email' : email,
+            'pass_hash' : pass_data['pass_hash'],
+            'pass_salt' : pass_data['pass_salt'],
+            'pass_algo' : pass_data['pass_algo']
+        }
+
+        user = models.User.objects.create(**data)
+
+        return user
+
+    def setUp(self):
+        user1 = self.create_user('JohnByte', 'jb@test.net', '12345678')
+        user2 = self.create_user('JohnByte1', 'jb111@test.net', '12345678')
+        user3 = self.create_user('FelixArgyle', 'felix_argyle@example.com', 'qwertyuiop')
+
+    def test_success_name(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'username' : 'JohnByte',
+            'password' : '12345678'
+        })
+
+        response = post_views.authorize(request, ip='100.200.18.90')
+
+        self.assertEqual('token' in response.data, True)
+        self.assertEqual('expired_at' in response.data, True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response)
+
+    def test_success_email(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'username' : 'jb@test.net',
+            'password' : '12345678'
+        })
+
+        response = post_views.authorize(request, ip='100.200.18.90')
+
+        self.assertEqual('token' in response.data, True)
+        self.assertEqual('expired_at' in response.data, True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response)
+
+    def test_already_authorized(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'username' : 'JohnByte1',
+            'password' : '12345678'
+        })
+
+        response = post_views.authorize(request, ip='128.200.18.90')
+        response = post_views.authorize(request, ip='128.200.18.90')
+
+        self.assertEqual(response.data['message'], 'User already authorized.')
+
+        self.assertEqual(response.status_code, 304)
+        self.assertEqual(response.content_type, 'application/json')
+
+    def test_not_exists(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'username' : 'EmeraldGreene',
+            'password' : '12345678'
+        })
+
+        response = post_views.authorize(request, ip='169.222.18.90')
+
+        self.assertEqual(response.data['message'], 'This user doesn\'t exist.')
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content_type, 'application/json')
+
+    def test_incorrect_password(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'username' : 'FelixArgyle',
+            'password' : '12345678'
+        })
+
+        response = post_views.authorize(request, ip='200.222.32.90')
+
+        self.assertEqual(response.data['message'], 'Incorrect password.')
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, 'application/json')
