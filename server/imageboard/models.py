@@ -13,6 +13,7 @@ from . import validators
 class Privelege(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
+    is_global = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -56,6 +57,9 @@ class User(models.Model):
             self.token.delete()
 
         return token_not_expired 
+
+    def get_privelege(self, name):
+        pass
 
 # Post models
 
