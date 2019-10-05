@@ -78,9 +78,14 @@ class DoesUserExistTest(TestCase):
         return user
 
     def test(self):
-        user1_exists_name = post_views.does_user_exist('John')
-        user1_exists_email = post_views.does_user_exist('john@example.com')
-        user2_exists = post_views.does_user_exist('Emill')
+        user1_by_name = models.User.objects.filter(name='John')
+        user1_exists_name = post_views.does_user_exist(user1_by_name)
+        
+        user1_by_email = models.User.objects.filter(email='john@example.com')
+        user1_exists_email = post_views.does_user_exist(user1_by_email)
+        
+        user2 = models.User.objects.filter(name='Emill')
+        user2_exists = post_views.does_user_exist(user2)
 
         self.assertEqual(user1_exists_email, True)
         self.assertEqual(user1_exists_name, True)
@@ -105,11 +110,13 @@ class IsPasswordCorrectTest(TestCase):
         return user
 
     def test_success(self):
-        correct = post_views.is_password_correct('John', '12345678')
+        user = models.User.objects.filter(name='John')[0]
+        correct = post_views.is_password_correct(user, '12345678')
         self.assertEqual(correct, True)
 
     def test_fail(self):
-        correct = post_views.is_password_correct('John', '12345679')
+        user = models.User.objects.filter(name='John')[0]
+        correct = post_views.is_password_correct(user, '12345679')
         self.assertEqual(correct, False)
 
 class AuthorizeTest(TestCase):
