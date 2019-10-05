@@ -18,14 +18,16 @@ class Privelege(models.Model):
         return self.name
 
 class UserGroup(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     priveleges = models.ManyToManyField('Privelege', related_name='priveleges', blank=True)
-    boards = models.ManyToManyField('Board', related_name='group_boards', blank=True)
-    is_global = models.BooleanField(default=False)
+    board = models.ForeignKey('Board', related_name='group_boards', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.name + ' : ' + self.get_board()
+
+    def get_board(self):
+        return self.board.abbr if self.board else '*'
 
 class UserToken(models.Model):
     value = models.CharField(max_length=250)
@@ -58,8 +60,20 @@ class User(models.Model):
 
         return token_not_expired 
 
-    def get_privelege(self, name):
-        pass
+    def get_priveleges(self, name):
+        result = []
+        
+        groups = self.groups.all()
+        for group in groups:
+            priveleges = group.priveleges.filter(name=name)
+            if len(priveleges) != 0:
+                data = {
+                    'board' : group.get_board(),
+                    'privelege' : priveleges[0].name
+                }
+                result.append(data)
+        
+        return result
 
 # Post models
 

@@ -110,7 +110,7 @@ class UserTokenTest(TestCase):
         return user_token
 
     def test_create_token(self):
-        expired_at = datetime(2020, 1, 1)
+        expired_at = '2020-01-01'
         ip = '123.40.45.8'
 
         user_token = self.create_token(expired_at, ip)
@@ -119,7 +119,7 @@ class UserTokenTest(TestCase):
         self.assertEqual(user_token.ip, ip)
 
     def test_user_authorized(self):
-        user_token = self.create_token(datetime(2020, 1, 1), '190.100.8.32')
+        user_token = self.create_token('2020-01-01', '190.100.8.32')
         
         user = User.objects.filter(name='JohnByte')[0]
         user.token = user_token
@@ -131,7 +131,7 @@ class UserTokenTest(TestCase):
         user1 = User.objects.filter(name='John666')[0]
 
         user2 = User.objects.filter(name='John111')[0]
-        user2.token = self.create_token(datetime(2019, 3, 1), '156.80.100.100')
+        user2.token = self.create_token('2019-03-01', '156.80.100.100')
         user2.save()
 
         self.assertEqual(user1.is_authorized(), False)
@@ -139,3 +139,36 @@ class UserTokenTest(TestCase):
         
         user2 = User.objects.filter(name='John111')[0]
         self.assertEqual(user2.token, None)
+
+class UserPrivbelegesTest(TestCase):
+    def setUp(self):
+        password = PasswordUtils.get_password('12345678')
+        
+        privelege = Privelege.objects.create(**{
+            'name' : 'get_reports',
+            'description' : 'Get reports on posts.'
+        })
+
+        user_group = UserGroup.objects.create(**{
+            'name' : 'moder'
+        })
+        user_group.priveleges.add(privelege)
+        user_group.save()
+
+        user = User.objects.create(**{
+            'name' : 'JohnByte',
+            'email' : 'johnbyte@example.com',
+            'pass_hash' : password['pass_hash'],
+            'pass_salt' : password['pass_salt'],
+            'pass_algo' : password['pass_algo']
+        })
+        user.groups.add(user_group)
+        user.save()
+
+    def test(self):
+        user = User.objects.filter(name='JohnByte')[0]
+        priveleges = user.get_priveleges('get_reports')
+
+        self.assertEqual(len(priveleges), 1)
+        self.assertEqual(priveleges[0]['board'], '*')
+        self.assertEqual(priveleges[0]['privelege'], 'get_reports')

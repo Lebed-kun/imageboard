@@ -10,19 +10,19 @@ from ...utils import PasswordUtils, StringUtils
 class IsUserAuthorizedTest(TestCase):
     def setUp(self):
         user1 = self.create_user('John', 'john@example.com', '123456')
-        user1.token = self.create_token(datetime(2020, 12, 1), '123.100.200.100')
+        user1.token = self.create_token('2020-12-01', '123.100.200.100')
         user1.save()
 
         user2 = self.create_user('John666', 'john666@example.com', 'qwertyuiop')
         
         user3 = self.create_user('John111', 'john111@example.com', 'asdfgh1234')
-        user3.token = self.create_token(datetime(2018, 1, 1), '100.200.10.11')
+        user3.token = self.create_token('2018-01-01', '100.200.10.11')
         user3.save()
 
     def create_token(self, expired_at, ip):
         data = {
             'value' : StringUtils.random(),
-            'expired_at' : expired_at + timedelta(days=1),
+            'expired_at' : expired_at,
             'ip' : ip
         }
 
