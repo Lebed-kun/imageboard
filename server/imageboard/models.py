@@ -13,7 +13,6 @@ from . import validators
 class Privelege(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
-    is_global = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -23,6 +22,7 @@ class UserGroup(models.Model):
     description = models.TextField(blank=True)
     priveleges = models.ManyToManyField('Privelege', related_name='priveleges', blank=True)
     boards = models.ManyToManyField('Board', related_name='group_boards', blank=True)
+    is_global = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
