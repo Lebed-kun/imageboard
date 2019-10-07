@@ -47,3 +47,7 @@ class PrivelegeAdmin(admin.ModelAdmin):
 @admin.register(models.Requests)
 class RequestsAdmin(admin.ModelAdmin):
     list_display = ('id', 'subject', 'text', 'created_at')
+
+@admin.register(models.UserToken)
+class UserToken(admin.ModelAdmin):
+    list_display = ('id', 'value', 'expired_at')

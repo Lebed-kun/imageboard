@@ -2,7 +2,7 @@ from django.db.models import F
 from rest_framework.response import Response
 from django.db.models import Q
 from rest_framework import status
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from ... import models
 from ... import constants
@@ -16,8 +16,13 @@ def is_user_authorized(ip):
         return False
     token = token[0]
 
-    user = models.User.objects.filter(token=token)[0]
-    return user.is_authorized()
+    not_expired = datetime.now(timezone.utc) < token.expired_at
+    if not not_expired:
+        token.delete()
+
+    user = models.User.objects.filter(token=token)
+    
+    return len(user) > 0 and not_expired
 
 def does_user_exist(users):
     return users.count() > 0

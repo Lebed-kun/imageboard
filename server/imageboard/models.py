@@ -51,15 +51,6 @@ class User(models.Model):
     def __str__(self):
         return self.name
 
-    def is_authorized(self):
-        has_token = self.token is not None
-        token_not_expired = has_token and datetime.now(timezone.utc) < self.token.expired_at
-
-        if has_token and not token_not_expired:
-            self.token.delete()
-
-        return token_not_expired 
-
     def get_priveleges(self, name):
         result = []
         

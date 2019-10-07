@@ -77,6 +77,7 @@ class DoesUserExistTest(TestCase):
 
         return user
 
+    # Done!
     def test(self):
         user1_by_name = models.User.objects.filter(name='John')
         user1_exists_name = post_views.does_user_exist(user1_by_name)
@@ -109,11 +110,13 @@ class IsPasswordCorrectTest(TestCase):
 
         return user
 
+    # Done!
     def test_success(self):
         user = models.User.objects.filter(name='John')[0]
         correct = post_views.is_password_correct(user, '12345678')
         self.assertEqual(correct, True)
 
+    # Done!
     def test_fail(self):
         user = models.User.objects.filter(name='John')[0]
         correct = post_views.is_password_correct(user, '12345679')
@@ -139,6 +142,7 @@ class AuthorizeTest(TestCase):
         user2 = self.create_user('JohnByte1', 'jb111@test.net', '12345678')
         user3 = self.create_user('FelixArgyle', 'felix_argyle@example.com', 'qwertyuiop')
 
+    # Done!
     def test_success_name(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -158,6 +162,7 @@ class AuthorizeTest(TestCase):
 
         print(response)
 
+    # Done!
     def test_success_email(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -177,6 +182,7 @@ class AuthorizeTest(TestCase):
 
         print(response)
 
+    # Done!
     def test_already_authorized(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -194,6 +200,7 @@ class AuthorizeTest(TestCase):
         self.assertEqual(response.status_code, 304)
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
     def test_not_exists(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -210,6 +217,7 @@ class AuthorizeTest(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
     def test_incorrect_password(self):
         request = HttpRequest()
         request.method = 'POST'

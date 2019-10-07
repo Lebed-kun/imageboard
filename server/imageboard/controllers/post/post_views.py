@@ -28,9 +28,9 @@ def get_bans(visitor_ip, abbr):
         global_ban.expired_at >= datetime.now(timezone.utc) else None
 
     if local_ban is not None and result['local'] is None:
-        models.Ban.objects.delete(id=local_ban.id)
+        local_ban.delete()
     if global_ban is not None and result['global'] is None:
-        models.Ban.objects.delete(id=global_ban.id)
+        global_ban.delete()
 
     return result
 
