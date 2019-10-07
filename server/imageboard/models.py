@@ -27,7 +27,7 @@ class UserGroup(models.Model):
         return self.name + ' : ' + self.get_board()
 
     def get_board(self):
-        return self.board.abbr if self.board else '*'
+        return self.board
 
 class UserToken(models.Model):
     value = models.CharField(max_length=250)
@@ -169,6 +169,7 @@ def post_file_delete(sender, instance, using, **kwargs):
 
 class Report(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name="report_posts")
+    board = models.ForeignKey('Board', on_delete=models.CASCADE, related_name="report_boards", null=True, blank=True)
     reason = models.TextField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
 

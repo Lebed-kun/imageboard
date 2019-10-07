@@ -28,23 +28,35 @@ def get_last_reports(request, *args, **kwargs):
         user = models.User.object.filter(token=token)[0]
         user_priveleges = user.get_priveleges(priveleges.GET_REPORTS)
         if len(user_priveleges) == 0:
-             message = {
+            message = {
                 'message' : 'User doesn\'t have permission to view reports.'
             }
             return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
 
         data = []
-        if user_priveleges[0]['board'] == '*'
+        if user_priveleges[0]['board'] is None:
             reports = models.Report.objects.all().order_by('-created_at')
             for report in reports:
                 data.append({
                     'post_id' : report.post.id,
+                    'board' : board.abbr if board else '*', 
                     'reason' : report.reason,
                     'created_at' : report.created_at.strftime('%d/%m/%Y %H:%M:%S')
                 })
 
         else:
-            # Get posts from boards -> get reports from posts
-            pass
+            boards = []
+            for privelege in user_priveleges:
+                boards.append(privelege['board'])
+            reports = models.Report.objects.filter(board__in=boards).order_by('-created_at')
+            for report in reports:
+                data.append({
+                    'post_id' : report.post.id,
+                    'board' : board.abbr if board else '*', 
+                    'reason' : report.reason,
+                    'created_at' : report.created_at.strftime('%d/%m/%Y %H:%M:%S')
+                })
+        
+        return Response(data, status=status.HTTP_200_OK, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')

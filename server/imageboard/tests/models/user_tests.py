@@ -101,5 +101,5 @@ class UserPrivelegesTest(TestCase):
         priveleges = user.get_priveleges('get_reports')
 
         self.assertEqual(len(priveleges), 1)
-        self.assertEqual(priveleges[0]['board'], '*')
+        self.assertEqual(priveleges[0]['board'], None)
         self.assertEqual(priveleges[0]['privelege'], 'get_reports')
