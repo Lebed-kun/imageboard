@@ -62,6 +62,10 @@ class User(models.Model):
                     'board' : group.get_board(),
                     'privelege' : priveleges[0].name
                 }
+
+                if data['board'] == '*':
+                    return [data] 
+
                 result.append(data)
         
         return result
