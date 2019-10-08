@@ -132,13 +132,15 @@ def report_posts(request, abbr, thread_id, ids, *args, **kwargs):
             }
             return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
 
+        board = posts[0].thread.board
+
         data = {
             'reason' : request.data.get('reason'),
             'posts' : posts
         }
 
         for post in data['posts']:
-            models.Report.objects.create(post=post, reason=data['reason'])
+            models.Report.objects.create(post=post, board=board, reason=data['reason'])
         
         message = {
             'message' : 'Report succeed.'
