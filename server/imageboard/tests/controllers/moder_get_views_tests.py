@@ -143,7 +143,7 @@ class GetLastReportsTest(TestCase):
         super_moder.save()
 
         # Moderator (unauthorized)
-        moder_ua = self.create_user('Moder007', 'test007@gmail.com'. 'asdfghj')
+        moder_ua = self.create_user('Moder007', 'test007@gmail.com', 'asdfghj')
         moder_ua.groups.add(moder_group)
         moder_ua.save()
 
