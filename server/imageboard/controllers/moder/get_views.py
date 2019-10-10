@@ -39,7 +39,8 @@ def get_last_reports(request, *args, **kwargs):
             for report in reports:
                 data.append({
                     'post_id' : report.post.id,
-                    'board' : board.abbr if board else '*', 
+                    'post_ip' : report.post.poster_ip,
+                    'board' : report.post.thread.board.abbr, 
                     'reason' : report.reason,
                     'created_at' : report.created_at.strftime('%d/%m/%Y %H:%M:%S')
                 })
@@ -52,7 +53,8 @@ def get_last_reports(request, *args, **kwargs):
             for report in reports:
                 data.append({
                     'post_id' : report.post.id,
-                    'board' : board.abbr if board else '*', 
+                    'post_ip' : report.post.poster_ip,
+                    'board' : report.post.thread.board.abbr, 
                     'reason' : report.reason,
                     'created_at' : report.created_at.strftime('%d/%m/%Y %H:%M:%S')
                 })
