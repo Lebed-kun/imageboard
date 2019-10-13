@@ -138,7 +138,7 @@ def report_posts(request, abbr, thread_id, ids, *args, **kwargs):
         }
 
         for post in data['posts']:
-            models.Report.objects.create(post=post, reason=data['reason'])
+            models.Report.objects.create(post=post, board=post.thread.board, reason=data['reason'])
         
         message = {
             'message' : 'Report succeed.'
