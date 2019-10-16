@@ -34,19 +34,31 @@ class GetLastReportsTest(TestCase):
             'abbr' : 'c'
         })
         thread_c = models.Thread.objects.create(board=board_c)
-        post_c = models.Post.objects.create(**{
+        
+        post_c1 = models.Post.objects.create(**{
             'message' : 'Floooood.',
             'poster_ip' : '100.200.101.103',
             'thread' : thread_c
         })
-        report_с = models.Report.objects.create(**{
-            'post' : post_c,
+        report_с1 = models.Report.objects.create(**{
+            'post' : post_c1,
+            'board' : board_c,
+            'reason' : 'Flood'
+        })
+
+        post_c2 = models.Post.objects.create(**{
+            'message' : 'SAGE',
+            'poster_ip' : '100.200.101.103',
+            'thread' : thread_c
+        })
+        report_с2 = models.Report.objects.create(**{
+            'post' : post_c2,
             'board' : board_c,
             'reason' : 'Flood'
         })
 
     def setUp_users(self):
-        moder_privelege = TestHelpers.create_privelege()
+        moder_privelege = TestHelpers.create_privelege(priveleges.DELETE_REPORTS)
         
         # Local moderator
         moder_group = TestHelpers.create_moder('Moderator', moder_privelege, 'bb')
@@ -91,6 +103,7 @@ class GetLastReportsTest(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content_type, 'application/json')
 
+    # Done!
     def test_user_restricted(self):
         request = HttpRequest()
         request.method = 'DELETE'
@@ -99,5 +112,53 @@ class GetLastReportsTest(TestCase):
         response = delete_views.delete_report(request, 1, ip='200.200.100.10')
 
         self.assertEqual(response.data['message'], 'User doesn\'t have permission to delete reports.')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, 'application/json')
+
+    # Done!
+    def test_report_not_exists(self):
+        request = HttpRequest()
+        request.method = 'DELETE'
+        request = Request(request)
+
+        response = delete_views.delete_report(request, 4, ip='103.48.88.101')
+
+        self.assertEqual(response.data['message'], 'Report doesn\'t exist.')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content_type, 'application/json')
+
+    # Done!
+    def test_success_global(self):
+        request = HttpRequest()
+        request.method = 'DELETE'
+        request = Request(request)
+
+        response = delete_views.delete_report(request, 2, ip='103.48.88.101')
+
+        self.assertEqual(response.data['message'], 'Delete succeed.')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content_type, 'application/json')
+
+    # Done!
+    def test_success_local(self):
+        request = HttpRequest()
+        request.method = 'DELETE'
+        request = Request(request)
+
+        response = delete_views.delete_report(request, 1, ip='123.40.80.101')
+
+        self.assertEqual(response.data['message'], 'Delete succeed.')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content_type, 'application/json')
+
+    # Done!
+    def test_fail_local(self):
+        request = HttpRequest()
+        request.method = 'DELETE'
+        request = Request(request)
+
+        response = delete_views.delete_report(request, 3, ip='123.40.80.101')
+
+        self.assertEqual(response.data['message'], 'User doesn\'t have permission to delete reports from board /c/.')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content_type, 'application/json')

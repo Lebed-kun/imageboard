@@ -35,7 +35,7 @@ def delete_report(request, id, *args, **kwargs):
             report = models.Report.objects.get(id=id)
         except models.Report.DoesNotExist:
             message = {
-                'message' : 'Post doesn\'t exist.'
+                'message' : 'Report doesn\'t exist.'
             }
             return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
 

@@ -76,7 +76,7 @@ class GetLastReportsTest(TestCase):
         })
 
     def setUp_users(self):
-        moder_privelege = TestHelpers.create_privelege()
+        moder_privelege = TestHelpers.create_privelege(priveleges.GET_REPORTS)
         
         # Local moderator
         moder_group = TestHelpers.create_moder('Moderator', moder_privelege, 'bb')

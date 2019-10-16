@@ -39,9 +39,9 @@ class TestHelpers:
         return user
 
     @staticmethod
-    def create_privelege():
+    def create_privelege(privelege):
         moder_privelege = models.Privelege.objects.create(**{
-            'name' : priveleges.GET_REPORTS,
+            'name' : privelege,
             'description' : 'Get last reports of boards'
         })
 
