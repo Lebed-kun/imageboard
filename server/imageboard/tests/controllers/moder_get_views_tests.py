@@ -3,10 +3,11 @@ from django.http import HttpRequest
 from rest_framework.request import Request
 import time
 
-from ...controllers.post import get_views
+from ...controllers.moder import get_views
 from ... import models
 from ...utils import PasswordUtils
 from ... import priveleges
+from ...utils import StringUtils
 
 class GetLastReportsTest(TestCase):
     def create_board(self, name, abbr):
@@ -49,9 +50,7 @@ class GetLastReportsTest(TestCase):
 
         return moder_privelege 
 
-    def create_moder(self, name, board_abbr=None):
-        moder_privelege = self.create_privelege()
-        
+    def create_moder(self, name, privelege, board_abbr=None):
         board = None
         if board_abbr:
             board = models.Board.objects.filter(abbr=board_abbr)[0]
@@ -60,7 +59,7 @@ class GetLastReportsTest(TestCase):
             'name' : name,
             'board' : board
         })
-        moder_group.priveleges.add(moder_privelege)
+        moder_group.priveleges.add(privelege)
         moder_group.save()
 
         return moder_group
@@ -83,6 +82,7 @@ class GetLastReportsTest(TestCase):
         })
         report_bb2 = models.Report.objects.create(**{
             'post' : post_bb2,
+            'board' : board_bb,
             'reason' : 'Offensive words'
         })
         post_bb3 = models.Post.objects.create(**{
@@ -92,6 +92,7 @@ class GetLastReportsTest(TestCase):
         })
         report_bb3 = models.Report.objects.create(**{
             'post' : post_bb3,
+            'board' : board_bb,
             'reason' : 'Gibberish'
         })
 
@@ -113,6 +114,7 @@ class GetLastReportsTest(TestCase):
         })
         report_с2 = models.Report.objects.create(**{
             'post' : post_c2,
+            'board' : board_c,
             'reason' : 'Offensive'
         })
         post_c3 = models.Post.objects.create(**{
@@ -122,12 +124,15 @@ class GetLastReportsTest(TestCase):
         })
         report_c3 = models.Report.objects.create(**{
             'post' : post_c3,
+            'board' : board_c,
             'reason' : 'Flood'
         })
 
     def setUp_users(self):
+        moder_privelege = self.create_privelege()
+        
         # Local moderator
-        moder_group = self.create_moder('Moderator', 'bb')
+        moder_group = self.create_moder('Moderator', moder_privelege, 'bb')
         moder = self.create_user('ChiModer', 'test@example.com', '12345678')
         token = self.create_token('2020-01-01', '123.40.80.101')
         moder.groups.add(moder_group)
@@ -135,7 +140,7 @@ class GetLastReportsTest(TestCase):
         moder.save()
 
         # Global moderator
-        super_moder_group = self.create_moder('Super moderator')
+        super_moder_group = self.create_moder('Super moderator', moder_privelege)
         super_moder = self.create_user('SuperModer', 'test111@examplee.com', 'qwertyuiop')
         token = self.create_token('2020-01-01', '103.48.88.101')
         super_moder.groups.add(super_moder_group)
@@ -155,7 +160,64 @@ class GetLastReportsTest(TestCase):
     def setUp(self):
         self.setUp_reports_bb()
         self.setUp_reports_c()
-        self.setUp_reports_users()
+        self.setUp_users()
 
+    # Done! 
+    def test_user_not_authorized(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
 
+        response = get_views.get_last_reports(request, ip='200.48.100.81')
+
+        self.assertEqual(response.data['message'], 'User is not authorized.')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, 'application/json')
+
+    # Done!
+    def test_user_restricted(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+
+        response = get_views.get_last_reports(request, ip='200.200.100.10')
+
+        self.assertEqual(response.data['message'], 'User doesn\'t have permission to view reports.')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, 'application/json')
+
+    # Done!
+    def test_success_local(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+
+        response = get_views.get_last_reports(request, ip='123.40.80.101')
+
+        self.assertEqual(response.data['pages_count'], 1)
+        self.assertEqual(response.data['prev_page'], None)
+        self.assertEqual(response.data['next_page'], None)
+        self.assertEqual(len(response.data['results']), 2)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
+
+    def test_success_global(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+
+        response = get_views.get_last_reports(request, ip='103.48.88.101')
+
+        self.assertEqual(response.data['pages_count'], 1)
+        self.assertEqual(response.data['prev_page'], None)
+        self.assertEqual(response.data['next_page'], None)
+        self.assertEqual(len(response.data['results']), 4)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content_type, 'application/json')
+
+        print(response.data)
 
