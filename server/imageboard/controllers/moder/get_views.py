@@ -9,7 +9,6 @@ from ... import constants
 from ...utils import get_visitor_ip
 from ..user.post_views import is_user_authorized
 from ... import priveleges
-from ... import constants
 
 # Helpers
 

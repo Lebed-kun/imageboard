@@ -5,6 +5,9 @@ from datetime import datetime, timezone
 
 from ... import models
 from ... import constants
+from ...utils import get_visitor_ip
+from ..user.post_views import is_user_authorized
+from ... import priveleges
 
 def delete_report(request, id, *args, **kwargs):
     if request.method == 'DELETE':
@@ -56,7 +59,5 @@ def delete_report(request, id, *args, **kwargs):
                     'message' : 'User doesn\'t have permission to delete reports from board /{}/.'.format(report.board.abbr)
                 }
                 return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
-
-
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
