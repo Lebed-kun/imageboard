@@ -204,6 +204,7 @@ class GetLastReportsTest(TestCase):
 
         print(response.data)
 
+    # Done!
     def test_success_global(self):
         request = HttpRequest()
         request.method = 'GET'
