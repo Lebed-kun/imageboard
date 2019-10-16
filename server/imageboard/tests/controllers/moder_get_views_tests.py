@@ -5,65 +5,12 @@ import time
 
 from ...controllers.moder import get_views
 from ... import models
-from ...utils import PasswordUtils
 from ... import priveleges
-from ...utils import StringUtils
+from ...utils import StringUtils, PasswordUtils
+
+from .helpers.helpers import TestHelpers
 
 class GetLastReportsTest(TestCase):
-    def create_board(self, name, abbr):
-        board = models.Board.objects.create(**{
-            'name' : board_name,
-            'abbr' : board_abbr
-        })
-        return board
-
-    def create_token(self, expired_at, ip):
-        data = {
-            'value' : StringUtils.random(),
-            'expired_at' : expired_at,
-            'ip' : ip
-        }
-
-        token = models.UserToken.objects.create(**data)
-
-        return token
-
-    def create_user(self, name, email, password):
-        pass_data = PasswordUtils.get_password(password)
-        data = {
-            'name' : name,
-            'email' : email,
-            'pass_hash' : pass_data['pass_hash'],
-            'pass_salt' : pass_data['pass_salt'],
-            'pass_algo' : pass_data['pass_algo']
-        }
-
-        user = models.User.objects.create(**data)
-
-        return user
-
-    def create_privelege(self):
-        moder_privelege = models.Privelege.objects.create(**{
-            'name' : priveleges.GET_REPORTS,
-            'description' : 'Get last reports of boards'
-        })
-
-        return moder_privelege 
-
-    def create_moder(self, name, privelege, board_abbr=None):
-        board = None
-        if board_abbr:
-            board = models.Board.objects.filter(abbr=board_abbr)[0]
-        
-        moder_group = models.UserGroup.objects.create(**{
-            'name' : name,
-            'board' : board
-        })
-        moder_group.priveleges.add(privelege)
-        moder_group.save()
-
-        return moder_group
-
     def setUp_reports_bb(self):
         board_bb = models.Board.objects.create(**{
             'name' : 'Extra b',
@@ -129,32 +76,32 @@ class GetLastReportsTest(TestCase):
         })
 
     def setUp_users(self):
-        moder_privelege = self.create_privelege()
+        moder_privelege = TestHelpers.create_privelege()
         
         # Local moderator
-        moder_group = self.create_moder('Moderator', moder_privelege, 'bb')
-        moder = self.create_user('ChiModer', 'test@example.com', '12345678')
-        token = self.create_token('2020-01-01', '123.40.80.101')
+        moder_group = TestHelpers.create_moder('Moderator', moder_privelege, 'bb')
+        moder = TestHelpers.create_user('ChiModer', 'test@example.com', '12345678')
+        token = TestHelpers.create_token('2020-01-01', '123.40.80.101')
         moder.groups.add(moder_group)
         moder.token = token
         moder.save()
 
         # Global moderator
-        super_moder_group = self.create_moder('Super moderator', moder_privelege)
-        super_moder = self.create_user('SuperModer', 'test111@examplee.com', 'qwertyuiop')
-        token = self.create_token('2020-01-01', '103.48.88.101')
+        super_moder_group = TestHelpers.create_moder('Super moderator', moder_privelege)
+        super_moder = TestHelpers.create_user('SuperModer', 'test111@examplee.com', 'qwertyuiop')
+        token = TestHelpers.create_token('2020-01-01', '103.48.88.101')
         super_moder.groups.add(super_moder_group)
         super_moder.token = token
         super_moder.save()
 
         # Moderator (unauthorized)
-        moder_ua = self.create_user('Moder007', 'test007@gmail.com', 'asdfghj')
+        moder_ua = TestHelpers.create_user('Moder007', 'test007@gmail.com', 'asdfghj')
         moder_ua.groups.add(moder_group)
         moder_ua.save()
 
         # User (authorized)
-        user = self.create_user('JohnByte', 'jb1221@mail.com', 'qwertyuiop')
-        user.token = self.create_token('2020-01-01', '200.200.100.10')
+        user = TestHelpers.create_user('JohnByte', 'jb1221@mail.com', 'qwertyuiop')
+        user.token = TestHelpers.create_token('2020-01-01', '200.200.100.10')
         user.save()
     
     def setUp(self):
@@ -221,4 +168,3 @@ class GetLastReportsTest(TestCase):
         self.assertEqual(response.content_type, 'application/json')
 
         print(response.data)
-
