@@ -109,7 +109,7 @@ def delete_post(request, id, *args, **kwargs):
                     return Response(message, status=status.HTTP_204_NO_CONTENT, content_type='application/json')
             else:
                 message = {
-                    'message' : 'User doesn\'t have permission to delete posts from board /{}/.'.format(report.board.abbr)
+                    'message' : 'User doesn\'t have permission to delete posts from board /{}/.'.format(post.thread.board.abbr)
                 }
                 return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
     else:
