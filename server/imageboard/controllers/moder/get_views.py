@@ -70,3 +70,9 @@ def get_last_reports(request, *args, **kwargs):
         return Response(data, status=status.HTTP_200_OK, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def get_last_bans(request, *args, **kwargs):
+    if request.method == 'GET':
+        pass
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
