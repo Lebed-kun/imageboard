@@ -168,3 +168,81 @@ class GetLastReportsTest(TestCase):
         self.assertEqual(response.content_type, 'application/json')
 
         print(response.data)
+
+class GetLastBansTest(TestCase):
+    def setUp_bans(self):
+        board_mu = models.Board.objects.create(**{
+            'name' : 'Music',
+            'abbr' : 'mu'
+        })
+        board_ya = models.Board.objects.create(**{
+            'name' : 'Yaoi',
+            'abbr' : 'ya'
+        })
+
+        ban_mu = models.Ban.objects.create(**{
+            'board' : board_mu,
+            'poster_ip' : '144.88.100.200',
+            'expired_at' : '2024-01-01',
+            'reason' : 'Antiukrainian propaganda'
+        })
+        ban_ya = models.Ban.objects.create(**{
+            'board' : board_ya,
+            'poster_ip' : '98.80.191.7',
+            'expired_at' : '2024-01-01',
+            'reason' : 'Homophobic propaganda'
+        })
+        ban_global = models.Ban.objects.create(**{
+            'poster_ip' : '111.200.140.1',
+            'expired_at' : '2024-01-01',
+            'reason' : 'Wipe'
+        })
+
+    def setUp_users(self):
+        moder_privelege = TestHelpers.create_privelege(priveleges.GET_BANS)
+        
+        # Local moderator
+        moder_group = TestHelpers.create_moder('Moderator', moder_privelege, 'mu')
+        moder = TestHelpers.create_user('ChiModer', 'test@example.com', '12345678')
+        token = TestHelpers.create_token('2020-01-01', '123.40.80.101')
+        moder.groups.add(moder_group)
+        moder.token = token
+        moder.save()
+
+        # Global moderator
+        super_moder_group = TestHelpers.create_moder('Super moderator', moder_privelege)
+        super_moder = TestHelpers.create_user('SuperModer', 'test111@examplee.com', 'qwertyuiop')
+        token = TestHelpers.create_token('2020-01-01', '103.48.88.101')
+        super_moder.groups.add(super_moder_group)
+        super_moder.token = token
+        super_moder.save()
+
+    def setUp(self):
+        self.setUp_bans()
+        self.setUp_users()
+
+    # Done!
+    def test_success_global(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+
+        response = get_views.get_last_bans(request, ip='103.48.88.101')
+        results = response.data['results']
+
+        self.assertEqual(len(results), 3)
+        print('Global bans: ', response.data)
+
+    # Done!
+    def test_success_local(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+
+        response = get_views.get_last_bans(request, ip='123.40.80.101')
+        results = response.data['results']
+        
+        self.assertEqual(len(results), 1)
+        print('Local bans: ', response.data)
+
+    

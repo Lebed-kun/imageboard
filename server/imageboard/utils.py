@@ -1,5 +1,6 @@
 import random
 from hashlib import sha1, md5, sha256
+from django.db.models import Q
 
 class StringUtils:
     @staticmethod
@@ -92,3 +93,14 @@ def get_visitor_ip(request):
     else:
         return request.META.get('REMOTE_ADDR')
 
+def full_text_found(field, query):
+    words = query.split()
+    condition = Q(**{
+        field : words[0]
+    })
+    for word in words:
+        consition |= Q(**{
+            field : word
+        })
+
+    return condition
