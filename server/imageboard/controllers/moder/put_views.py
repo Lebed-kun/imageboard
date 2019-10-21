@@ -66,3 +66,9 @@ def edit_post(request, id, *args, **kwargs):
                 return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def edit_ban(request, id, *args, **kwargs):
+    if request.method == 'PUT':
+        pass
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
