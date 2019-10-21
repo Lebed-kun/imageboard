@@ -110,3 +110,46 @@ class EditPostTest(TestCase):
 
         self.assertEqual(response.data['message'], 'User doesn\'t have permission to edit posts from board /c/.')
         self.assertEqual(response.status_code, 403)
+
+class EditBanTEst(TestCase):
+    def setUp_bans(self):
+        board = models.Board.objects.create(**{
+            'name' : 'General',
+            'abbr' : 'b'
+        })
+        ban = models.Ban.objects.create(**{
+            'board' : board,
+            'poster_ip' : '133.148.89.88',
+            'expired_at' : '2023-01-01',
+            'reason' : 'Spam'
+        })
+    
+    def setUp_users(self):
+        moder_privelege = TestHelpers.create_privelege(priveleges.EDIT_BANS)
+
+        # Global moderator
+        super_moder_group = TestHelpers.create_moder('Super moderator', moder_privelege)
+        super_moder = TestHelpers.create_user('SuperModer', 'test111@examplee.com', 'qwertyuiop')
+        token = TestHelpers.create_token('2020-01-01', '103.48.88.101')
+        super_moder.groups.add(super_moder_group)
+        super_moder.token = token
+        super_moder.save()
+
+    def setUp(self):
+        self.setUp_bans()
+        self.setUp_users()
+
+    # Done!
+    def test(self):
+        request = HttpRequest()
+        request.method = 'PUT'
+        request = Request(request)
+        request.data.update({
+            'expired_at' : '2020-01-01',
+            'reason' : 'A little spam'
+        })
+
+        response = put_views.edit_ban(request, 1, ip='103.48.88.101')
+
+        self.assertEqual(response.data['reason'], 'A little spam')
+        print(response.data)
