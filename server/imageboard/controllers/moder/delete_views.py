@@ -162,7 +162,7 @@ def delete_ban(request, id, *args, **kwargs):
                     return Response(message, status=status.HTTP_204_NO_CONTENT, content_type='application/json')
             else:
                 message = {
-                    'message' : 'User doesn\'t have permission to delete bans from board /{}/.'.format(post.thread.board.abbr)
+                    'message' : 'User doesn\'t have permission to delete bans from board /{}/.'.format(ban.board.abbr)
                 }
                 return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
     else:

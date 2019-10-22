@@ -1,3 +1,5 @@
+# Moder priveleges
+
 GET_REPORTS = 'get_reports'
 DELETE_REPORTS = 'delete_reports'
 
@@ -11,3 +13,5 @@ EDIT_BANS = 'edit_bans'
 DELETE_BANS = 'delete_bans'
 
 GET_MODER_BOARDS = 'get_moder_boards'
+
+EDIT_THREADS = 'edit_threads'
