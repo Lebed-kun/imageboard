@@ -9,3 +9,5 @@ BAN_POSTERS = 'ban_posters'
 GET_BANS = 'get_bans'
 EDIT_BANS = 'edit_bans'
 DELETE_BANS = 'delete_bans'
+
+GET_MODER_BOARDS = 'get_moder_boards'

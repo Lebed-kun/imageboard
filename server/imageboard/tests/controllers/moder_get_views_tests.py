@@ -245,4 +245,42 @@ class GetLastBansTest(TestCase):
         self.assertEqual(len(results), 1)
         print('Local bans: ', response.data)
 
+class GetModerBoardsTest(TestCase):
+    def setUp_boards(self):
+        board_b = models.Board.objects.create(**{
+            'name' : 'General',
+            'abbr' : 'b'
+        })
+        board_c = models.Board.objects.create(**{
+            'name' : 'Creative',
+            'abbr' : 'c'
+        })
+
+    def setUp_users(self):
+        moder_privelege = TestHelpers.create_privelege(priveleges.GET_MODER_BOARDS)
+        
+        # Local moderator
+        moder_group_b = TestHelpers.create_moder('Moderator /b/', moder_privelege, 'b')
+        moder_group_c = TestHelpers.create_moder('Moderator /c/', moder_privelege, 'c')
+        moder = TestHelpers.create_user('ChiModer', 'test@example.com', '12345678')
+        token = TestHelpers.create_token('2020-01-01', '123.40.80.101')
+        moder.groups.add(moder_group_b)
+        moder.groups.add(moder_group_c)
+        moder.token = token
+        moder.save()
+
+    def setUp(self):
+        self.setUp_boards()
+        self.setUp_users()
+
+    def test(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        request = Request(request)
+
+        response = get_views.get_moder_boards(request, ip='123.40.80.101')
+        results = response.data['results']
+        
+        self.assertEqual(len(results), 2)
+        print('Local boards: ', response.data)
     
