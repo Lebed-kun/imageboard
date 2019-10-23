@@ -106,7 +106,7 @@ def edit_thread(request, id, *args, **kwargs):
                 'updated' : True,
                 'id' : thread.id,
                 'sticked' : thread.sticked,
-                'read_only' : thread.read_only
+                'read_only' : thread.read_only,
                 'updated_at' : thread.updated_at.strftime('%d/%m/%Y %H:%M:%S')
             }
             return Response(data, status=status.HTTP_202_ACCEPTED, content_type='application/json')
@@ -120,7 +120,7 @@ def edit_thread(request, id, *args, **kwargs):
                         'updated' : True,
                         'id' : thread.id,
                         'sticked' : thread.sticked,
-                        'read_only' : thread.read_only
+                        'read_only' : thread.read_only,
                         'updated_at' : thread.updated_at.strftime('%d/%m/%Y %H:%M:%S')
                     }
                     return Response(data, status=status.HTTP_202_ACCEPTED, content_type='application/json')

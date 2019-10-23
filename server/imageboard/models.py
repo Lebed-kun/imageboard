@@ -63,7 +63,7 @@ class User(models.Model):
                     'privelege' : priveleges[0].name
                 }
 
-                if data['board'] == '*':
+                if data['board'] is None:
                     return [data] 
 
                 result.append(data)
