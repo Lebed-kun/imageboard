@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from ...controllers.user import post_views
 from ... import models
 from ...utils import PasswordUtils, StringUtils
+from .helpers.helpers import TestHelpers
 
 class IsUserAuthorizedTest(TestCase):
     def setUp(self):
@@ -180,7 +181,7 @@ class AuthorizeTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, 'application/json')
 
-        print(response)
+        print('Auth info: ', response)
 
     # Done!
     def test_already_authorized(self):
@@ -233,3 +234,31 @@ class AuthorizeTest(TestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content_type, 'application/json')
+
+class DeauthorizeTest(TestCase):
+    def setUp(self):
+        user1 = TestHelpers.create_user('JohnByte', 'johnbyte@example.com', 'qwertyuiop')
+        user1.token = TestHelpers.create_token('2020-01-01', '123.100.90.10')
+        user1.save()
+
+        user2 = TestHelpers.create_user('JohnByte1', 'jb111@test.net', '12345678')
+
+    def test_not_authorized(self):
+        request = HttpRequest()
+        request.method = 'DELETE'
+        request = Request(request)
+        
+        response = post_views.deauthorize(request, ip='88.88.88.100')
+
+        self.assertEqual(response.data['message'], 'User is not authorized.')
+        self.assertEqual(response.status_code, 403)
+
+    def test_success(self):
+        request = HttpRequest()
+        request.method = 'DELETE'
+        request = Request(request)
+        
+        response = post_views.deauthorize(request, ip='123.100.90.10')
+
+        self.assertEqual(response.data['message'], 'Logout success.')
+        self.assertEqual(response.status_code, 204)

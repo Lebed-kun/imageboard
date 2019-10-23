@@ -76,3 +76,25 @@ def authorize(request, *args, **kwargs):
         return Response(data, status=status.HTTP_200_OK, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def deauthorize(request, *args, **kwargs):
+    if request.method == 'DELETE':
+        # Check if user is not authorized
+        ip = kwargs.get('ip', get_visitor_ip(request))
+        if not is_user_authorized(ip):
+            message = {
+                'message' : 'User is not authorized.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Success
+        token = models.UserToken.objects.filter(ip=ip)[0]
+        token.delete()
+
+        message = {
+            'message' : 'Logout success.'
+        }
+
+        return Response(message, status=status.HTTP_204_NO_CONTENT, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
