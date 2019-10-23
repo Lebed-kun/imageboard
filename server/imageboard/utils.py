@@ -93,14 +93,15 @@ def get_visitor_ip(request):
     else:
         return request.META.get('REMOTE_ADDR')
 
-def full_text_found(field, query):
+def full_text_found(fields, query):
     words = query.split()
-    condition = Q(**{
-        field : words[0]
-    })
+    condition = Q()
+    
     for word in words:
-        consition |= Q(**{
-            field : word
-        })
+        for field in fields:
+            full_field = field + '__icontains'
+            condition |= Q(**{
+                full_field  : word
+            })
 
     return condition
