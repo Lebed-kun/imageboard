@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.db.models import F
 from rest_framework.response import Response
 from django.db.models import Q
@@ -96,5 +97,57 @@ def deauthorize(request, *args, **kwargs):
         }
 
         return Response(message, status=status.HTTP_204_NO_CONTENT, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def register(request, *args, **kwargs):
+    if request.method == 'POST':
+        # Check if user is authorized
+        ip = kwargs.get('ip', get_visitor_ip(request))
+        if is_user_authorized(ip):
+            message = {
+                'message' : 'User is already authorized.'
+            }
+            return Response(message, status=status.HTTP_304_NOT_MODIFIED, content_type='application/json')
+
+        # Check if passwords match
+        password = request.data.get('password')
+        password1 = request.data.get('password1')
+        if password != password1:
+            message = {
+                'message' : 'Passwords don\'t match.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Check if user with those name and email exists
+        user = None
+        try:
+            password_data = PasswordUtils.get_password(password) 
+            user = models.User.objects.create(**{
+                'name' : request.data.get('name'),
+                'email' : request.data.get('email'),
+                'pass_hash' : password_data['pass_hash'],
+                'pass_salt' : password_data['pass_salt'],
+                'pass_algo' : password_data['pass_algo']
+            })
+        except IntegrityError as e:
+            if 'unique constraint' in e.args[0] and 'name' in e.args[0]:
+                message = {
+                    'message' : 'User with this name already exists.'
+                }
+                return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+            elif 'unique constraint' in e.args[0] and 'email' in e.args[0]:
+                message = {
+                    'message' : 'User with this email already exists.'
+                }
+                return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+            else:
+                return Response(e.args[0], status=status.HTTP_500_INTERNAL_SERVER_ERROR, content_type='application/json')
+
+        message = {
+            'message' : 'User registry succeed.'
+        }
+
+        return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
