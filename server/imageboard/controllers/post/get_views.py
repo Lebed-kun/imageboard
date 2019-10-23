@@ -6,6 +6,7 @@ from rest_framework import status
 
 from ... import models
 from ... import constants
+from ...utils import full_text_found
 
 def get_post_data(post):
     data = {
@@ -60,7 +61,7 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
         threads = models.Thread.objects.filter(board=board)
         threads = threads.order_by('-sticked', '-bumped_at')
 
-        query = request.query_params.get('query', None)
+        query = request.query_params.get('q', None)
         query_threads = None
         if query is not None:
             query_threads = []
@@ -139,7 +140,14 @@ def get_posts_list(request, abbr, thread_id, *args, **kwargs):
 
 def get_user_boards(request, *args, **kwargs):
     if request.method == 'GET':
-        boards = models.Board.objects.filter(author__isnull=False).order_by('-created_at')
+        search_query = request.query_params.get('q', None)
+        search_fields = request.query_params.get('fields', 'name')
+        search_fields = search_fields.split(',')
+        
+        boards = models.Board.objects.filter(author__isnull=False)
+        if search_query is not None:
+            boards = boards.filter(full_text_found(search_fields, search_query))
+        boards = boards.order_by('-created_at')
 
         per_page = kwargs.get('per_page', constants.BOARDS_PER_PAGE)
         paginator = Paginator(boards, per_page)

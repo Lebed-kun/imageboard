@@ -204,7 +204,7 @@ class GetLastUpdatedThreads(TestCase):
         request.method = 'GET'
         request = Request(request)
         request.query_params.update({
-            'query' : 'world'
+            'q' : 'world'
         })
 
         options = {

@@ -38,10 +38,12 @@ def get_last_reports(request, *args, **kwargs):
         # Success
         reports = None
         search_query = request.query_params.get('q', None)
+        search_fields = request.query_params.get('fields', 'reason')
+        search_fields = search_fields.split(',')
         if user_priveleges[0]['board'] is None:
             reports = models.Report.objects.all()
             if search_query is not None:
-                reports = reports.filter(full_text_found('reason', search_query))
+                reports = reports.filter(full_text_found(search_fields, search_query))
             reports = reports.order_by('-created_at')
         else:
             boards = []
@@ -103,10 +105,12 @@ def get_last_bans(request, *args, **kwargs):
         # Success
         bans = None
         search_query = request.query_params.get('q', None)
+        search_fields = request.query_params.get('fields', 'reason')
+        search_fields = search_fields.split(',')
         if user_priveleges[0]['board'] is None:
             bans = models.Ban.objects.all()
             if search_query is not None:
-                bans = bans.filter(full_text_found('reason', search_query))
+                bans = bans.filter(full_text_found(search_fields, search_query))
             bans = bans.order_by('-created_at')
         else:
             boards = []
@@ -169,10 +173,12 @@ def get_moder_boards(request, *args, **kwargs):
         # Success
         moder_boards = None
         search_query = request.query_params.get('q', None)
+        search_fields = request.query_params.get('fields', 'name')
+        search_fields = search_fields.split(',')
         if user_priveleges[0]['board'] is None:
             moder_boards = models.Board.objects.all()
             if search_query is not None:
-                moder_boards = moder_boards.filter(full_text_found('name', search_query))
+                moder_boards = moder_boards.filter(full_text_found(search_fields, search_query))
         else:
             board_ids = []
             for privelege in user_priveleges:
