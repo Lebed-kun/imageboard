@@ -32,3 +32,6 @@
 
 ## Сценарий модерации
 <img src="./Imageboard-moder-diagram.png" />
+
+## Сценарий управления досками
+<img src="./Imageboard-user-board-diagram.png" />
