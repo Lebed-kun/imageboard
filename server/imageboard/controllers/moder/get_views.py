@@ -185,7 +185,7 @@ def get_moder_boards(request, *args, **kwargs):
                 board_ids.append(privelege['board'].id)
             moder_boards = models.Board.objects.filter(id__in=board_ids)
             if search_query is not None:
-                moder_boards = moder_boards.filter(full_text_found('name', search_query))
+                moder_boards = moder_boards.filter(full_text_found(search_fields, search_query))
 
         per_page = kwargs.get('per_page', constants.MODER_BOARDS_PER_PAGE)
         paginator = Paginator(moder_boards, per_page)

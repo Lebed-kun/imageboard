@@ -17,4 +17,4 @@ GET_MODER_BOARDS = 'get_moder_boards'
 EDIT_THREADS = 'edit_threads'
 DELETE_THREADS = 'delete_thread'
 
-GET_OWN_BOARDS = 'get_own_boards'
+GET_ADMIN_BOARDS = 'get_admin_boards'
