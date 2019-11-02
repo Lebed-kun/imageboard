@@ -24,7 +24,8 @@ EDIT_THREADS = 'edit_threads'
 DELETE_THREADS = 'delete_thread'
 
 GET_ADMIN_BOARDS = 'get_admin_boards'
+DELETE_BOARDS = 'delete_board'
 
 ADMIN_PRIVELEGES = MODER_PRIVELEGES + [
-    GET_ADMIN_BOARDS
+    GET_ADMIN_BOARDS, DELETE_BOARDS
 ]
