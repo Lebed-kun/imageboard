@@ -45,7 +45,7 @@ def create_board(request, *args, **kwargs):
         # Create board
         picture = request.data.get('picture', None)
         if picture is not None:
-            picture = ContentFile(base64.b64decode(picture['content'], name=pucture['name']))
+            picture = ContentFile(base64.b64decode(picture['content'], name=picture['name']))
 
         token = models.UserToken.objects.filter(ip=ip)[0]
         user = models.User.objects.filter(token=token)[0]
@@ -75,7 +75,7 @@ def create_board(request, *args, **kwargs):
             'description' : board.description,
             'bump_limit' : board.bump_limit,
             'spam_words' : board.spam_words,
-            'picture' : board.picture.url if board.picture is not None else None,
+            'picture' : board.picture.url if board.picture else None,
             'author' : board.author.name,
             'created_at' : board.created_at.strftime('%d/%m/%Y %H:%M:%S')
         }
