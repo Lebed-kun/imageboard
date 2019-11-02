@@ -33,7 +33,7 @@ def delete_board(request, id, *args, **kwargs):
         board = None
         try:
             board = models.Board.objects.get(id=id)
-        except models.Report.DoesNotExist:
+        except models.Board.DoesNotExist:
             message = {
                 'message' : 'Board doesn\'t exist.'
             }

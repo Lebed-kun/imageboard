@@ -3,7 +3,6 @@ from rest_framework import status
 from datetime import datetime, timezone
 from django.core.files.base import ContentFile
 import base64
-from django.db import IntegrityError
 
 from ... import models
 from ... import constants
@@ -43,12 +42,12 @@ def create_board(request, *args, **kwargs):
             return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
 
         # Create board
-        picture = request.data.get('picture', None)
-        if picture is not None:
-            picture = ContentFile(base64.b64decode(picture['content'], name=picture['name']))
-
         token = models.UserToken.objects.filter(ip=ip)[0]
         user = models.User.objects.filter(token=token)[0]
+
+        picture = request.data.get('picture', None)
+        if picture is not None:
+            picture = ContentFile(base64.b64decode(picture['content']), name=picture['name'])
 
         board = models.Board.objects.create(**{
             'name' : request.data.get('name'),

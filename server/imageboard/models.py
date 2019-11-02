@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator, EmailValidator, URLValidator
-from django.db.models.signals import pre_delete, post_delete
+from django.db.models.signals import pre_delete, post_delete, pre_save
 from django.dispatch import receiver
 from datetime import datetime, timezone
 
@@ -90,6 +90,21 @@ class Board(models.Model):
 def board_picture_delete(sender, instance, using, **kwargs):
     if instance.picture and os.path.isfile(instance.picture.path):
         os.remove(instance.picture.path)
+
+@receiver(pre_save, sender=Board, dispatch_uid='board_picture_edit')
+def board_picture_edit(sender, instance, **kwargs):
+    if not instance.id:
+        return False
+
+    try:
+        old_file = sender.objects.get(id=instance.id).file
+    except sender.DoesNotExist:
+        return False
+
+    new_file = instance.file
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
 
 class Thread(models.Model):
     sticked = models.BooleanField(default=False)
