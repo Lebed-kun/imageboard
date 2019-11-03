@@ -10,7 +10,7 @@ from ...utils import get_visitor_ip, full_text_found
 from ..user.post_views import is_user_authorized
 from ... import priveleges
 
-def get_own_boards(request, *args, **kwargs):
+def get_admin_boards(request, *args, **kwargs):
     if request.method == 'GET':
         # Check if user is authorized
         ip = kwargs.get('ip', get_visitor_ip(request))
@@ -70,3 +70,45 @@ def get_own_boards(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+def get_priv_users(request, abbr, *args, **kwargs):
+    if request.method == 'GET':
+        # Check if user is authorized
+        ip = kwargs.get('ip', get_visitor_ip(request))
+        if not is_user_authorized(ip):
+            message = {
+                'message' : 'User is not authorized.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Check if user has access to edit boards
+        token = models.UserToken.objects.filter(ip=ip)[0]
+        user = models.User.objects.filter(token=token)[0]
+        user_priveleges = user.get_priveleges(priveleges.EDIT_BOARDS)
+        if len(user_priveleges) == 0:
+            message = {
+                'message' : 'User doesn\'t have permission to edit boards.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Check if board exists
+        board = models.Board.objects.filter(abbr=abbr)
+        if len(board) == 0:
+            message = {
+                'message' : 'Board /{}/ doesn\'t exists.'.format(abbr)
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+
+        # Success
+        priv_users = None
+        search_query = request.query_params.get('q', None)
+        search_fields = request.query_params.get('fields', 'name')
+        search_fields = search_fields.split(',')
+        if user_priveleges[0]['board'] is None:
+            priv_users = models.User.objects.all()
+            if search_query is not None:
+                priv_users = priv_users.filter(full_text_found(search_fields, search_query))
+        else:
+            # TO DO
+            pass
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
