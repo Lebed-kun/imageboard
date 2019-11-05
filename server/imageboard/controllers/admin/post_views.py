@@ -132,7 +132,7 @@ def add_priv_user(request, abbr, group_name, *args, **kwargs):
             message = {
                 'message' : 'User {} became {} successfully!'.format(username, group_name.lower())
             }
-            return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
+            return Response(message, status=status.HTTP_202_ACCEPTED, content_type='application/json')
         else:
             for priv in user_priveleges:
                 if priv['board'] == board:
@@ -142,7 +142,7 @@ def add_priv_user(request, abbr, group_name, *args, **kwargs):
                     message = {
                         'message' : 'User {} became {} successfully!'.format(username, group_name.lower())
                     }
-                    return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
+                    return Response(message, status=status.HTTP_202_ACCEPTED, content_type='application/json')
             else:
                 message = {
                     'message' : 'User doesn\'t have permission to edit board /{}/.'.format(board.abbr)

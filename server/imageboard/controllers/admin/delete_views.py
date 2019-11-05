@@ -61,3 +61,70 @@ def delete_board(request, id, *args, **kwargs):
                 return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def remove_priv_user(request, abbr, group_name, id, *args, **kwargs):
+    if request.method == 'DELETE':
+        # Check if user is authorized
+        ip = kwargs.get('ip', get_visitor_ip(request))
+        if not is_user_authorized(ip):
+            message = {
+                'message' : 'User is not authorized.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Check if user has access to edit boards
+        token = models.UserToken.objects.filter(ip=ip)[0]
+        user = models.User.objects.filter(token=token)[0]
+        user_priveleges = user.get_priveleges(priveleges.EDIT_BOARDS)
+        if len(user_priveleges) == 0:
+            message = {
+                'message' : 'User doesn\'t have permission to edit boards.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Check if board exists
+        board = models.Board.objects.filter(abbr=abbr)
+        if len(board) == 0:
+            message = {
+                'message' : 'Board /{}/ doesn\'t exists.'.format(abbr)
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+        board = board[0]
+
+        # Check if user to be unpriveleged exists
+        priv_user = None
+        try:
+            priv_user = models.User.objects.get(id=id)
+        except models.User.DoesNotExist:
+            message = {
+                'message' : 'User doesn\'t exists.'
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+
+        # Success
+        group = models.UserGroup.objects.filter(Q(name__icontains=group_name) & Q(board=board))[0]
+        if user_priveleges[0]['board'] is None:
+            priv_user.groups.remove(group)
+            priv_user.save()
+
+            message = {
+                'message' : 'User {} is removed from {}s successfully!'.format(username, group_name.lower())
+            }
+            return Response(message, status=status.HTTP_202_ACCEPTED, content_type='application/json')
+        else:
+            for priv in user_priveleges:
+                if priv['board'] == board:
+                    priv_user.groups.remove(group)
+                    priv_user.save()
+
+                    message = {
+                        'message' : 'User {} is removed from {}s successfully!'.format(username, group_name.lower())
+                    }
+                    return Response(message, status=status.HTTP_202_ACCEPTED, content_type='application/json')
+            else:
+                message = {
+                    'message' : 'User doesn\'t have permission to edit board /{}/.'.format(board.abbr)
+                }
+                return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
