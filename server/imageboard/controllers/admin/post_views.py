@@ -82,3 +82,53 @@ def create_board(request, *args, **kwargs):
         return Response(data, status=status.HTTP_201_CREATED, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+def add_priv_user(request, abbr, group_name, *args, **kwargs):
+    if request.method == 'POST':
+        # Check if user is authorized
+        ip = kwargs.get('ip', get_visitor_ip(request))
+        if not is_user_authorized(ip):
+            message = {
+                'message' : 'User is not authorized.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Check if user has access to edit boards
+        token = models.UserToken.objects.filter(ip=ip)[0]
+        user = models.User.objects.filter(token=token)[0]
+        user_priveleges = user.get_priveleges(priveleges.EDIT_BOARDS)
+        if len(user_priveleges) == 0:
+            message = {
+                'message' : 'User doesn\'t have permission to edit boards.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
+
+        # Check if board exists
+        board = models.Board.objects.filter(abbr=abbr)
+        if len(board) == 0:
+            message = {
+                'message' : 'Board /{}/ doesn\'t exists.'.format(abbr)
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+        board = board[0]
+
+        # Check if user to be priveleged exists
+        username = request.data.get('name')
+        priv_user = models.User.objects.filter(name=username)
+        if len(priv_user) == 0:
+            message = {
+                'message' : 'User with name {} doesn\'t exists.'.format(username)
+            }
+            return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+        priv_user = priv_user[0]
+
+        # Success
+        group = models.UserGroup.objects.filter(Q(name__icontains=group_name) & Q(board=board))
+
+        data = []
+        if user_priveleges['board'][0] is None:
+            pass
+        else:
+            pass
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
