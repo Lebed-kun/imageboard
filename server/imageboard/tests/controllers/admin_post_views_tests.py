@@ -39,3 +39,66 @@ class CreateBoardTest(TestCase):
         self.assertEqual(response.data['author'], 'JohnByte')
 
         print('Created board:', response.data)
+
+# Done!
+class AddPrivUserTest(TestCase):
+    def setUp_board(self):
+        board_y = TestHelpers.create_board('Alternative', 'y')
+
+    def setUp_groups(self):
+        moder_privelege = TestHelpers.create_privelege(priveleges.GET_REPORTS)
+        moder_group = TestHelpers.create_group('Moder', moder_privelege, 'y')
+
+        admin_privelege = TestHelpers.create_privelege(priveleges.EDIT_BOARDS)
+        admin_group = TestHelpers.create_group('Admin', admin_privelege, 'y')
+
+        owner = TestHelpers.create_user('JohnByte', 'jb1111@mail.com', '12345678')
+        owner.token = TestHelpers.create_token('2020-01-01', '123.100.111.88')
+        owner.groups.add(admin_group)
+        owner.save()
+
+    def setUp_users(self):
+        moder1 = TestHelpers.create_user('ModerY', 'test@example.com', '1234456789')
+        moder1.token = TestHelpers.create_token('2024-01-01', '139.100.11.30')
+        moder1.save()
+
+        moder2 = TestHelpers.create_user('ModerXY', 'testxy@example.com', '1234456789')
+        moder2.token = TestHelpers.create_token('2024-01-01', '140.101.66.48')
+        moder2.save()
+
+        admin = TestHelpers.create_user('AdminXXX', 'testxxx@example.com', '1234456789')
+        admin.token = TestHelpers.create_token('2024-01-01', '140.160.110.130')
+        admin.save()
+
+    def setUp(self):
+        self.setUp_board()
+        self.setUp_groups()
+        self.setUp_users()
+
+    def test_moders(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'username' : 'ModerY'
+        })
+
+        response = post_views.add_priv_user(request, 'y', 'Moder', ip='123.100.111.88')
+        self.assertEqual(response.data['message'], 'User ModerY became moder successfully!')
+
+        request.data.update({
+            'username' : 'ModerXY'
+        })
+        response = post_views.add_priv_user(request, 'y', 'Moder', ip='123.100.111.88')
+        self.assertEqual(response.data['message'], 'User ModerXY became moder successfully!')
+
+    def test_admin(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request = Request(request)
+        request.data.update({
+            'username' : 'AdminXXX'
+        })
+
+        response = post_views.add_priv_user(request, 'y', 'Admin', ip='123.100.111.88')
+        self.assertEqual(response.data['message'], 'User AdminXXX became admin successfully!')

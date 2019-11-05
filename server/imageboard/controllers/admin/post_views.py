@@ -3,6 +3,7 @@ from rest_framework import status
 from datetime import datetime, timezone
 from django.core.files.base import ContentFile
 import base64
+from django.db.models import Q
 
 from ... import models
 from ... import constants
@@ -113,23 +114,23 @@ def add_priv_user(request, abbr, group_name, *args, **kwargs):
         board = board[0]
 
         # Check if user to be priveleged exists
-        username = request.data.get('name')
+        username = request.data.get('username')
         priv_user = models.User.objects.filter(name=username)
         if len(priv_user) == 0:
             message = {
-                'message' : 'User with name {} doesn\'t exists.'.format(username)
+                'message' : 'User {} doesn\'t exists.'.format(username)
             }
             return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
         priv_user = priv_user[0]
 
         # Success
         group = models.UserGroup.objects.filter(Q(name__icontains=group_name) & Q(board=board))[0]
-        if user_priveleges['board'][0] is None:
+        if user_priveleges[0]['board'] is None:
             priv_user.groups.add(group)
             priv_user.save()
 
             message = {
-                'message' : 'User {} became {} successfully!'.format(username, group_name)
+                'message' : 'User {} became {} successfully!'.format(username, group_name.lower())
             }
             return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
         else:
@@ -139,7 +140,7 @@ def add_priv_user(request, abbr, group_name, *args, **kwargs):
                     priv_user.save()
 
                     message = {
-                        'message' : 'User {} became {} successfully!'.format(username, group_name)
+                        'message' : 'User {} became {} successfully!'.format(username, group_name.lower())
                     }
                     return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
             else:
