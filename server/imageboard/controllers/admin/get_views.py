@@ -104,9 +104,8 @@ def get_priv_users(request, abbr, *args, **kwargs):
         search_fields = request.query_params.get('fields', 'name')
         search_fields = search_fields.split(',')
         if user_priveleges[0]['board'] is None:
-            priv_users = models.User.objects.all()
-            if search_query is not None:
-                priv_users = priv_users.filter(full_text_found(search_fields, search_query))
+            # TO DO
+            pass
         else:
             # TO DO
             pass

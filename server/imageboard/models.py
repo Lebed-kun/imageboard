@@ -21,7 +21,7 @@ class UserGroup(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     priveleges = models.ManyToManyField('Privelege', related_name='priveleges', blank=True)
-    board = models.ForeignKey('Board', related_name='group_boards', on_delete=models.SET_NULL, null=True, blank=True)
+    board = models.ForeignKey('Board', related_name='group_boards', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name + ' : ' + self.get_board()
