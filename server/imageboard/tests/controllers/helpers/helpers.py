@@ -6,8 +6,8 @@ class TestHelpers:
     @staticmethod
     def create_board(name, abbr):
         board = models.Board.objects.create(**{
-            'name' : board_name,
-            'abbr' : board_abbr
+            'name' : name,
+            'abbr' : abbr
         })
         return board
 
@@ -40,12 +40,12 @@ class TestHelpers:
 
     @staticmethod
     def create_privelege(privelege):
-        moder_privelege = models.Privelege.objects.create(**{
+        group_privelege = models.Privelege.objects.create(**{
             'name' : privelege,
             'description' : 'Get last reports of boards'
         })
 
-        return moder_privelege 
+        return group_privelege 
 
     @staticmethod
     def create_moder(name, privelege, board_abbr=None):
@@ -61,3 +61,7 @@ class TestHelpers:
         moder_group.save()
 
         return moder_group
+
+    @staticmethod
+    def create_group(name, privelege, board_abbr=None):
+        return TestHelpers.create_moder(name, privelege, board_abbr)

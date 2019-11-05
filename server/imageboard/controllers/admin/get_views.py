@@ -91,7 +91,7 @@ def get_admin_boards(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
-def get_priv_users(request, abbr, *args, **kwargs):
+def get_priv_users(request, abbr, group_name, *args, **kwargs):
     if request.method == 'GET':
         # Check if user is authorized
         ip = kwargs.get('ip', get_visitor_ip(request))
@@ -118,9 +118,10 @@ def get_priv_users(request, abbr, *args, **kwargs):
                 'message' : 'Board /{}/ doesn\'t exists.'.format(abbr)
             }
             return Response(message, status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+        board = board[0]
 
         # Success
-        group = request.data.get('group')
+        group = group_name
         priv_users = None
         search_query = request.query_params.get('q', None)
         search_fields = request.query_params.get('fields', 'name')
@@ -138,13 +139,12 @@ def get_priv_users(request, abbr, *args, **kwargs):
                     data = get_priv_users_data(group, board, {
                         'fields' : search_fields,
                         'query' : search_query
-                    })  
+                    })
+                    return Response(data, status=status.HTTP_200_OK, content_type='application/json')  
             else:
                 message = {
                     'message' : 'User doesn\'t have permission to get {}s from board /{}/.'.format(group.lower(), board.abbr)
                 }
                 return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
-
-        return Response(data, status=status.HTTP_200_OK, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
