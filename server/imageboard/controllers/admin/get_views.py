@@ -132,7 +132,8 @@ def get_priv_users(request, abbr, group_name, *args, **kwargs):
             data = get_priv_users_data(group, board, {
                 'fields' : search_fields,
                 'query' : search_query
-            })          
+            })
+            return Response(data, status=status.HTTP_200_OK, content_type='application/json')            
         else:
             for priv in user_priveleges:
                 if priv['board'] == board:
@@ -143,7 +144,7 @@ def get_priv_users(request, abbr, group_name, *args, **kwargs):
                     return Response(data, status=status.HTTP_200_OK, content_type='application/json')  
             else:
                 message = {
-                    'message' : 'User doesn\'t have permission to get {}s from board /{}/.'.format(group.lower(), board.abbr)
+                    'message' : 'User doesn\'t have permission to edit board /{}/.'.format(board.abbr)
                 }
                 return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
     else:

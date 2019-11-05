@@ -123,12 +123,29 @@ def add_priv_user(request, abbr, group_name, *args, **kwargs):
         priv_user = priv_user[0]
 
         # Success
-        group = models.UserGroup.objects.filter(Q(name__icontains=group_name) & Q(board=board))
-
-        data = []
+        group = models.UserGroup.objects.filter(Q(name__icontains=group_name) & Q(board=board))[0]
         if user_priveleges['board'][0] is None:
-            pass
+            priv_user.groups.add(group)
+            priv_user.save()
+
+            message = {
+                'message' : 'User {} became {} successfully!'.format(username, group_name)
+            }
+            return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
         else:
-            pass
+            for priv in user_priveleges:
+                if priv['board'] == board:
+                    priv_user.groups.add(group)
+                    priv_user.save()
+
+                    message = {
+                        'message' : 'User {} became {} successfully!'.format(username, group_name)
+                    }
+                    return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
+            else:
+                message = {
+                    'message' : 'User doesn\'t have permission to edit board /{}/.'.format(board.abbr)
+                }
+                return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
