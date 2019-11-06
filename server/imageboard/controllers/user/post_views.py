@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from django.db.models import Q
 from rest_framework import status
 from datetime import datetime, timedelta, timezone
+from django.core.mail import EmailMultiAlternatives
+
+from server import config
 
 from ... import models
 from ... import constants
@@ -147,6 +150,9 @@ def register(request, *args, **kwargs):
         message = {
             'message' : 'User registry succeed.'
         }
+
+        email = EmailMultiAlternatives('Registration on imageboard', 'Login: {}\nPassword: {}'.format(user.name, password), config.EMAIL_HOST_USER, [user.email,])
+        email.send()
 
         return Response(message, status=status.HTTP_201_CREATED, content_type='application/json')
     else:
