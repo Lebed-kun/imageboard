@@ -20,13 +20,13 @@ def is_user_authorized(ip):
         return False
     token = token[0]
 
-    not_expired = datetime.now(timezone.utc) < token.expired_at
-    if not not_expired:
+    expired = datetime.now(timezone.utc) >= token.expired_at
+    if expired:
         token.delete()
 
     user = models.User.objects.filter(token=token)
     
-    return len(user) > 0 and not_expired
+    return len(user) > 0 and not expired
 
 def does_user_exist(users):
     return users.count() > 0
