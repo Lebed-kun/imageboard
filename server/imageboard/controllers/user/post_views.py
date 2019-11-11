@@ -1,6 +1,8 @@
 from django.db import IntegrityError
 from django.db.models import F
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 from django.db.models import Q
 from rest_framework import status
 from datetime import datetime, timedelta, timezone
@@ -38,6 +40,8 @@ def is_password_correct(user, password):
 
 # Views
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def authorize(request, *args, **kwargs):
     if request.method == 'POST':
         ip = kwargs.get('ip', get_visitor_ip(request))
@@ -81,6 +85,8 @@ def authorize(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def deauthorize(request, *args, **kwargs):
     if request.method == 'DELETE':
         # Check if user is not authorized
@@ -103,6 +109,8 @@ def deauthorize(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def register(request, *args, **kwargs):
     if request.method == 'POST':
         # Check if user is authorized
