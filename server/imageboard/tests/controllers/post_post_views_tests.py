@@ -209,11 +209,11 @@ class ReportPostsTest(TestCase):
         request.method = 'POST'
         request = Request(request)
         request.data.update({
-            'reason' : 'Gibberish.'
+            'reason' : 'Gibberish.',
+            'ids' : [2, 3]
         })
-        ids = [2, 3]
 
-        response = post_views.report_posts(request, 'b', 1, ids)
+        response = post_views.report_posts(request, 'b', 1)
 
         self.assertEqual(response.data['message'], 'Report succeed.')
         self.assertEqual(response.status_code, 201)
@@ -227,11 +227,11 @@ class ReportPostsTest(TestCase):
         request.method = 'POST'
         request = Request(request)
         request.data.update({
-            'reason' : 'Gibberish.'
+            'reason' : 'Gibberish.'.
+            'ids' : [6]
         })
-        ids = [6]
 
-        response = post_views.report_posts(request, 'b', 1, ids)
+        response = post_views.report_posts(request, 'b', 1)
 
         self.assertEqual(response.data['message'], 'Post not found.')
         self.assertEqual(response.status_code, 404)

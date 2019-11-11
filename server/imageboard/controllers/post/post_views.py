@@ -1,5 +1,7 @@
 from django.db.models import F
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.core.files.base import ContentFile
@@ -38,6 +40,8 @@ def is_visitor_banned(global_ban, local_ban):
     return global_ban is not None or local_ban is not None
 
 # Posting create views
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def create_post(request, abbr, thread_id, *args, **kwargs):
     if request.method == 'POST':
         thread = None
@@ -120,8 +124,11 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
-def report_posts(request, abbr, thread_id, ids, *args, **kwargs):
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
+def report_posts(request, abbr, thread_id, *args, **kwargs):
     if request.method == 'POST':
+        ids = request.data.get('ids')
         posts = []
         try:
             for id in ids:
@@ -149,6 +156,8 @@ def report_posts(request, abbr, thread_id, ids, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def create_thread(request, abbr, *args, **kwargs):
     if request.method == 'POST':
         board = models.Board.objects.filter(abbr=abbr)
@@ -187,6 +196,8 @@ def create_thread(request, abbr, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def send_request_board(request, *args, **kwargs):
     if request.method == 'POST':
         subject = request.data['subject']
