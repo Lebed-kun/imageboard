@@ -1,8 +1,10 @@
 from django.db.models import F
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import status
+from rest_framework.decorators import api_view, renderer_classes
 
 from ... import models
 from ... import constants
@@ -34,6 +36,8 @@ def get_post_data(post):
 
 # General
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_general_boards(request, *args, **kwargs):
     if request.method == 'GET':
         boards = models.Board.objects.filter(author=None)
@@ -48,6 +52,8 @@ def get_general_boards(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_last_updated_threads(request, abbr, *args, **kwargs):
     if request.method == 'GET':
         board = models.Board.objects.filter(abbr=abbr)
@@ -113,6 +119,8 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_posts_list(request, abbr, thread_id, *args, **kwargs):
     if request.method == 'GET':
         thread = None
@@ -138,6 +146,8 @@ def get_posts_list(request, abbr, thread_id, *args, **kwargs):
 
 # User boards
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_user_boards(request, *args, **kwargs):
     if request.method == 'GET':
         search_query = request.query_params.get('q', None)
