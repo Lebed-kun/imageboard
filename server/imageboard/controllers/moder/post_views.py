@@ -1,5 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 from datetime import datetime, timezone
 
 from ... import models
@@ -8,6 +10,8 @@ from ...utils import get_visitor_ip
 from ..user.post_views import is_user_authorized
 from ... import priveleges
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def ban_poster(request, *args, **kwargs):
     if request.method == 'POST':
         # Check if user is authorized
