@@ -1,5 +1,7 @@
 from django.db.models import F
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import status
@@ -15,6 +17,8 @@ from ... import priveleges
 
 # Views
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_last_reports(request, *args, **kwargs):
     if request.method == 'GET':
         # Check if user is authorized
@@ -82,6 +86,8 @@ def get_last_reports(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_last_bans(request, *args, **kwargs):
     if request.method == 'GET':
         # Check if user is authorized
@@ -150,6 +156,8 @@ def get_last_bans(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_moder_boards(request, *args, **kwargs):
     if request.method == 'GET':
         # Check if user is authorized
