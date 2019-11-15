@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import status
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 
 from ... import models
 from ... import constants
@@ -31,6 +33,8 @@ def get_priv_users_data(group, board, search=None):
 
 # Views
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_admin_boards(request, *args, **kwargs):
     if request.method == 'GET':
         # Check if user is authorized
@@ -91,6 +95,8 @@ def get_admin_boards(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_priv_users(request, abbr, group_name, *args, **kwargs):
     if request.method == 'GET':
         # Check if user is authorized
