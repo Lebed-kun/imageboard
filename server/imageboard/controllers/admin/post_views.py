@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 from django.core.files.base import ContentFile
 import base64
 from django.db.models import Q
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 
 from ... import models
 from ... import constants
@@ -32,6 +34,8 @@ def create_group(group_name, privs, board=None):
 
 # Views
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def create_board(request, *args, **kwargs):
     if request.method == 'POST':
         # Check if user is authorized
@@ -84,6 +88,8 @@ def create_board(request, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
 def add_priv_user(request, abbr, group_name, *args, **kwargs):
     if request.method == 'POST':
         # Check if user is authorized

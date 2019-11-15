@@ -12,4 +12,5 @@ urlpatterns = [
     path('moder_delete/', include('imageboard.urls.moder.delete_urls')),
 
     path('admin_get/', include('imageboard.urls.admin.get_urls')),
+    path('admin_post/', include('imageboard.urls.admin.post_urls'))
 ]
