@@ -3,6 +3,8 @@ from rest_framework import status
 from datetime import datetime, timezone
 from django.core.files.base import ContentFile
 import base64
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 
 from ... import models
 from ... import constants
@@ -45,6 +47,8 @@ def edit_board_data(request, board):
 
 # Views
 
+@api_view(('PUT',))
+@renderer_classes((JSONRenderer,))
 def edit_board(request, id, *args, **kwargs):
     if request.method == 'PUT':
         # Check if user is authorized
