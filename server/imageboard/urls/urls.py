@@ -8,5 +8,6 @@ urlpatterns = [
 
     path('moder_get/', include('imageboard.urls.moder.get_urls')),
     path('moder_post/', include('imageboard.urls.moder.post_urls')),
-    path('moder_put/', include('imageboard.urls.moder.put_urls'))
+    path('moder_put/', include('imageboard.urls.moder.put_urls')),
+    path('moder_delete/', include('imageboard.urls.moder.delete_urls'))
 ]
