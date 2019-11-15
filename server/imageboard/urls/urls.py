@@ -6,5 +6,7 @@ urlpatterns = [
 
     path('user_post/', include('imageboard.urls.user.post_urls')),
 
-    path('moder_get/', include('imageboard.urls.moder.get_urls'))
+    path('moder_get/', include('imageboard.urls.moder.get_urls')),
+    path('moder_post/', include('imageboard.urls.moder.post_urls')),
+    path('moder_put/', include('imageboard.urls.moder.put_urls'))
 ]

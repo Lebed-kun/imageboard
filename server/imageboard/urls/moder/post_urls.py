@@ -4,5 +4,5 @@ from ...controllers.moder import post_views
 
 # Done!
 urlpatterns = [
-    path('new_ban/', post_views.ban_poster)
+    path('newban/', post_views.ban_poster)
 ]
