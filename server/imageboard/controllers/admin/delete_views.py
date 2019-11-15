@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from django.core.files.base import ContentFile
 from rest_framework import status
 from datetime import datetime, timezone
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes
 
 from ... import models
 from ... import constants
@@ -9,6 +11,8 @@ from ...utils import get_visitor_ip
 from ..user.post_views import is_user_authorized
 from ... import priveleges
 
+@api_view(('DELETE',))
+@renderer_classes((JSONRenderer,))
 def delete_board(request, id, *args, **kwargs):
     if request.method == 'DELETE':
         # Check if user is authorized
@@ -62,6 +66,8 @@ def delete_board(request, id, *args, **kwargs):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+@api_view(('DELETE',))
+@renderer_classes((JSONRenderer,))
 def remove_priv_user(request, abbr, group_name, id, *args, **kwargs):
     if request.method == 'DELETE':
         # Check if user is authorized

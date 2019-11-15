@@ -14,4 +14,5 @@ urlpatterns = [
     path('admin_get/', include('imageboard.urls.admin.get_urls')),
     path('admin_post/', include('imageboard.urls.admin.post_urls')),
     path('admin_put/', include('imageboard.urls.admin.put_urls')),
+    path('admin_delete/', include('imageboard.urls.admin.delete_urls'))
 ]
