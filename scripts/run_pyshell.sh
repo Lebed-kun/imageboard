@@ -1,2 +1,2 @@
 source env/scripts/activate
-python server/manage.py shell
+python rest/manage.py shell
