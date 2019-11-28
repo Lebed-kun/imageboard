@@ -1,3 +1,3 @@
 source env/scripts/activate
-python server/manage.py makemigrations
-python server/manage.py migrate
+python rest/manage.py makemigrations
+python rest/manage.py migrate

@@ -38,6 +38,24 @@ def get_post_data(post):
 
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
+def get_site_info(request, *args, **kwargs):
+    if request.method == 'GET':
+        info = None
+        try:
+            info = models.SiteInfo.objects.get(id=1)
+            data = {
+                'info' : info.info,
+                'created_at' : info.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+                'updated_at' : info.updated_at.strftime('%d/%m/%Y %H:%M:%S')
+            }
+            return Response(data, status=status.HTTP_200_OK, content_type='application/json')
+        except models.SiteInfo.DoesNotExist:
+            return Response({}, status=status.HTTP_200_OK, content_type='application/json')
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,))
 def get_general_boards(request, *args, **kwargs):
     if request.method == 'GET':
         boards = models.Board.objects.filter(author=None)
