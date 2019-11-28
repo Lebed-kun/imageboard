@@ -8,11 +8,11 @@ class LinkMenu extends Component {
     static HORIZONTAL = 'horizontal';
     static VERTICAL = 'vertical';
 
-    renderLinks = (type, condition = props => true) => {
+    renderLinks = (type, title, condition = props => true) => {
         const links = this.props.links[type];
         if (links && condition(this.props)) {
             return (
-                <SubMenu key={type}>
+                <SubMenu key={type} title={title}>
                     {links.map((el, id) => (
                         <Item key={id}>
                             <a href={el.href}>{el.title}</a>
@@ -31,9 +31,9 @@ class LinkMenu extends Component {
         if (boardLinks) {
             return (
                 <Menu mode={this.props.position}>
-                    {this.renderLinks('prev', props => props.position === LinkMenu.HORIZONTAL)}
-                    {this.renderLinks('boards')}
-                    {this.renderLinks('next')}
+                    {this.renderLinks('prev', 'Главная', props => props.position === LinkMenu.HORIZONTAL)}
+                    {this.renderLinks('boards', 'Доски')}
+                    {this.renderLinks('next', 'Прочее')}
                 </Menu>
             )
         } else {
@@ -46,4 +46,4 @@ class LinkMenu extends Component {
     }
 }
 
-export default Menu;
+export default LinkMenu;

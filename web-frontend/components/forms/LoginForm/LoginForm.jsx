@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Router from 'next/router';
-import { Input, Button } from 'antd';
+import { Input, Button, Form } from 'antd';
 
-import { Form } from '../../../core/Form/Form.jsx';
+import HTTPForm from '../../../core/Form/Form.jsx';
 
 import { BASE_REST_URL } from '../../../constants.js';
 
@@ -25,7 +25,7 @@ class LoginForm extends Component {
         const getFieldDecorator = this.props.form.getFieldDecorator;
 
         return (
-            <Form title="Вход" onRequest={this.handleRequest} onResponse={this.handleResponse}>
+            <HTTPForm title="Вход" onRequest={this.handleRequest} onResponse={this.handleResponse}>
                 <Item>
                     {getFieldDecorator('username', {
                         rules : [
@@ -55,7 +55,7 @@ class LoginForm extends Component {
                         Войти
                     </Button>
                 </Item>
-            </Form>
+            </HTTPForm>
         )
     }
 }

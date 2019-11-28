@@ -3,9 +3,7 @@ import { Card } from 'antd';
 
 const About = props => {
     return (
-        <Card>
-            {props.info}
-        </Card>
+        <Card>{props.info}</Card>
     )
 }
 

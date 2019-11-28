@@ -7,7 +7,7 @@ import LoginForm from '../components/forms/LoginForm/LoginForm.jsx';
 import Menu from '../components/views/Menu/Menu.jsx';
 import About from '../components/views/About/About.jsx';
 
-import { BASE_REST_URL, BASE_URL } from '../constants.js';
+import { BASE_REST_URL } from '../constants.js';
 
 const IndexPage = props => {
     return (
@@ -30,8 +30,11 @@ const IndexPage = props => {
 }
 
 IndexPage.getInitialProps = async () => {
-    const boards = await axios.get(`${BASE_REST_URL}/main_get/`);
-    const info = await axios.get(`${BASE_REST_URL}/main_get/about/`);
+    let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
+    boards = boards.data;
+
+    let info = await axios.get(`${BASE_REST_URL}/main_get/about/`);
+    info = info.data;
 
     return {
         links : {
