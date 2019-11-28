@@ -2,6 +2,10 @@ from django.contrib import admin
 
 from . import models
 
+@admin.register(models.SiteInfo)
+class SiteInfoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'info')
+
 # Post models
 
 @admin.register(models.Board)
