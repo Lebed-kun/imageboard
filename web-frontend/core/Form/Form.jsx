@@ -44,8 +44,4 @@ class HttpForm extends Component {
     }
 }
 
-const HttpFormWrapper = name => {
-    return Form.create({ name })(HttpForm);
-}
-
-export default HttpFormWrapper;
+export default HttpForm;
