@@ -24,6 +24,10 @@ const BoardsPage = props => {
                 <Header style={{ position : 'fixed', zIndex : 1, width : '100%' }}>
                     <Menu mode="horizontal" links={props.menuLinks}/>
                 </Header>
+
+                <Content>
+                    <h1>{props.name}</h1>
+                </Content>
             </Layout>
         </>
     )
@@ -39,6 +43,7 @@ BoardsPage.getInitialProps = async ({ query : { abbr }}) => {
     const currBoard = threads.board;
 
     return {
+        name : currBoard.name,
         title : `/${currBoard.abbr}/ ${currBoard.name}`,
 
         menuLinks : {
