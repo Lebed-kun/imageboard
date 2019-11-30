@@ -8,5 +8,5 @@ urlpatterns = [
     path('about/', get_views.get_site_info),
     path('userboards/', get_views.get_user_boards),
     path('boards/<abbr>/', get_views.get_last_updated_threads),
-    path('boards/<abbr>/threads/<thread_id>/', get_views.get_posts_list)
+    path('threads/<thread_id>/', get_views.get_posts_list)
 ]

@@ -26,7 +26,7 @@ class LoginForm extends Component {
 
         return (
             <HTTPForm title="Вход" onRequest={this.handleRequest} onResponse={this.handleResponse}>
-                <Item key="login">
+                <Item key="username">
                     {getFieldDecorator('username', {
                         rules : [
                             {

@@ -42,7 +42,7 @@ def is_visitor_banned(global_ban, local_ban):
 # Posting create views
 @api_view(('POST',))
 @renderer_classes((JSONRenderer,))
-def create_post(request, abbr, thread_id, *args, **kwargs):
+def create_post(request, thread_id, *args, **kwargs):
     if request.method == 'POST':
         thread = None
         try:
@@ -60,7 +60,7 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
             return Response(message, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
 
         poster_ip = kwargs.get('poster_ip', get_visitor_ip(request))
-        bans = get_bans(poster_ip, abbr)
+        bans = get_bans(poster_ip, thread.board.abbr)
         banned = is_visitor_banned(bans['global'], bans['local'])
 
         if banned:
@@ -126,7 +126,7 @@ def create_post(request, abbr, thread_id, *args, **kwargs):
 
 @api_view(('POST',))
 @renderer_classes((JSONRenderer,))
-def report_posts(request, abbr, thread_id, *args, **kwargs):
+def report_posts(request, thread_id, *args, **kwargs):
     if request.method == 'POST':
         ids = request.data.get('ids')
         posts = []
@@ -185,7 +185,7 @@ def create_thread(request, abbr, *args, **kwargs):
             return Response(data, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
         
         thread = models.Thread.objects.create(board=board)
-        create_post(request, abbr, thread.id, *args, **kwargs)
+        create_post(request, thread.id, *args, **kwargs)
 
         data = {
             'created' : True,

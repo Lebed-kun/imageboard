@@ -5,6 +5,8 @@ import { Layout } from 'antd';
 
 import Menu from '../components/views/Menu/Menu.jsx';
 
+import PostForm from '../components/forms/PostForm/PostForm.jsx'; 
+
 import { BASE_REST_URL } from '../constants.js';
 
 import 'antd/dist/antd.less';
@@ -12,7 +14,7 @@ import 'antd/dist/antd.less';
 const { Header, Content } = Layout;
 
 const BoardsPage = props => {
-    // TO DO : posting forms and threads
+    // TO DO : search form and threads
     
     return (
         <>
@@ -25,8 +27,10 @@ const BoardsPage = props => {
                     <Menu mode="horizontal" links={props.menuLinks}/>
                 </Header>
 
-                <Content>
-                    <h1>{props.name}</h1>
+                <Content style={{ paddingTop : '72px' }}>
+                    <h1>{props.board.name}</h1>
+
+                    <PostForm board={props.board.abbr} />
                 </Content>
             </Layout>
         </>
@@ -43,7 +47,7 @@ BoardsPage.getInitialProps = async ({ query : { abbr }}) => {
     const currBoard = threads.board;
 
     return {
-        name : currBoard.name,
+        board : currBoard,
         title : `/${currBoard.abbr}/ ${currBoard.name}`,
 
         menuLinks : {

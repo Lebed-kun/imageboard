@@ -143,7 +143,7 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
 
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
-def get_posts_list(request, abbr, thread_id, *args, **kwargs):
+def get_posts_list(request, thread_id, *args, **kwargs):
     if request.method == 'GET':
         thread = None
         try:

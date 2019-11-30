@@ -22,9 +22,9 @@ const IndexPage = props => {
 
             <Layout>
                 <Sider>
-                    <LoginForm />
-
                     <Menu links={props.links} />
+
+                    <LoginForm />
                 </Sider>
 
                 <Content>
