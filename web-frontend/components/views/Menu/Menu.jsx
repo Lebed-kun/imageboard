@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Menu } from 'antd';
 
-const ItemGroup = Menu.ItemGroup;
+const SubMenu = Menu.SubMenu;
 const Item = Menu.Item;
 
 class LinkMenu extends Component {
@@ -12,13 +12,13 @@ class LinkMenu extends Component {
         const links = this.props.links[type];
         if (links && condition(this.props)) {
             return (
-                <ItemGroup key={type} title={title}>
+                <SubMenu key={type} title={title}>
                     {links.map((el, id) => (
                         <Item key={id}>
                             <a href={el.href}>{el.title}</a>
                         </Item>
                     ))}
-                </ItemGroup>
+                </SubMenu>
             )
         } else {
             return null;
@@ -30,7 +30,7 @@ class LinkMenu extends Component {
         const boardLinks = this.props.links.boards;
         if (boardLinks) {
             return (
-                <Menu mode={this.props.position}>
+                <Menu mode="inline">
                     {this.renderLinks('prev', 'Главная', props => props.position === LinkMenu.HORIZONTAL)}
                     {this.renderLinks('boards', 'Доски')}
                     {this.renderLinks('next', 'Прочее')}
