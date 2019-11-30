@@ -110,6 +110,10 @@ def get_last_updated_threads(request, abbr, *args, **kwargs):
             'pages_count' : paginator.num_pages,
             'prev_page' : page.previous_page_number() if page.has_previous() else None,
             'next_page' : page.next_page_number() if page.has_next() else None,
+            'board' : {
+                'name' : board.name,
+                'abbr' : board.abbr
+            },
             'results' : []
         }
         for thread in threads:
