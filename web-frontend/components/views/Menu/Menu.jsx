@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Menu } from 'antd';
 
-const SubMenu = Menu.SubMenu;
+const ItemGroup = Menu.ItemGroup;
 const Item = Menu.Item;
 
 class LinkMenu extends Component {
@@ -12,13 +12,13 @@ class LinkMenu extends Component {
         const links = this.props.links[type];
         if (links && condition(this.props)) {
             return (
-                <SubMenu key={type} title={title}>
+                <ItemGroup key={type} title={title}>
                     {links.map((el, id) => (
                         <Item key={id}>
                             <a href={el.href}>{el.title}</a>
                         </Item>
                     ))}
-                </SubMenu>
+                </ItemGroup>
             )
         } else {
             return null;

@@ -26,7 +26,7 @@ class LoginForm extends Component {
 
         return (
             <HTTPForm title="Вход" onRequest={this.handleRequest} onResponse={this.handleResponse}>
-                <Item>
+                <Item key="login">
                     {getFieldDecorator('username', {
                         rules : [
                             {
@@ -38,7 +38,7 @@ class LoginForm extends Component {
                     })(<Input placeholder="Имя пользователя/email" />)}
                 </Item>
 
-                <Item>
+                <Item key="password">
                     {getFieldDecorator('password', {
                             rules : [
                                 {
@@ -50,7 +50,7 @@ class LoginForm extends Component {
                     })(<Password placeholder="Пароль" />)}
                 </Item>
 
-                <Item>
+                <Item key="submit">
                     <Button type="primary" htmlType="submit">
                         Войти
                     </Button>

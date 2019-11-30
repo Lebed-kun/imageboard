@@ -9,6 +9,8 @@ import About from '../components/views/About/About.jsx';
 
 import { BASE_REST_URL } from '../constants.js';
 
+import 'antd/dist/antd.less';
+
 const IndexPage = props => {
     return (
         <>
