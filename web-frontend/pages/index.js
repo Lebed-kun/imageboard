@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { Row } from 'antd';
+import { Layout } from 'antd';
 import axios from 'axios';
 
 import LoginForm from '../components/forms/LoginForm/LoginForm.jsx';
@@ -11,6 +11,8 @@ import { BASE_REST_URL } from '../constants.js';
 
 import 'antd/dist/antd.less';
 
+const { Sider, Content } = Layout;
+
 const IndexPage = props => {
     return (
         <>
@@ -18,15 +20,17 @@ const IndexPage = props => {
                 <title>Chi-chan</title>
             </Head>
 
-            <Row key="side">
-                <LoginForm />
+            <Layout>
+                <Sider>
+                    <LoginForm />
 
-                <Menu links={props.links} />
-            </Row>
+                    <Menu links={props.links} />
+                </Sider>
 
-            <Row key="info">
-                <About info={props.info} />
-            </Row>
+                <Content>
+                    <About info={props.info} />
+                </Content>
+            </Layout>
         </>
     )
 }

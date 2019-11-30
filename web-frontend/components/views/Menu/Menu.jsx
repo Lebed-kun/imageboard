@@ -6,7 +6,7 @@ const Item = Menu.Item;
 
 class LinkMenu extends Component {
     static HORIZONTAL = 'horizontal';
-    static VERTICAL = 'vertical';
+    static INLINE = 'inline';
 
     renderLinks = (type, title, condition = props => true) => {
         const links = this.props.links[type];
@@ -30,8 +30,8 @@ class LinkMenu extends Component {
         const boardLinks = this.props.links.boards;
         if (boardLinks) {
             return (
-                <Menu mode="inline">
-                    {this.renderLinks('prev', 'Главная', props => props.position === LinkMenu.HORIZONTAL)}
+                <Menu mode={this.props.mode || LinkMenu.INLINE}>
+                    {this.renderLinks('prev', 'Главная', props => props.mode === LinkMenu.HORIZONTAL)}
                     {this.renderLinks('boards', 'Доски')}
                     {this.renderLinks('next', 'Прочее')}
                 </Menu>

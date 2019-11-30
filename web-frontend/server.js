@@ -9,6 +9,10 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
     const server = express();
 
+    server.get('/boards/:abbr', (req, res) => {
+        return app.render(req, res, '/boards', { abbr : req.params.abbr });
+    })
+
     server.all('*', (req, res) => {
         return handle(req, res);
     });
