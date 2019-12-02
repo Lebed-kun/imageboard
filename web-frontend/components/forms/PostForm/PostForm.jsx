@@ -99,6 +99,10 @@ class PostForm extends Component {
                         </Checkbox>
                     )}
                 </Item>
+
+                <Item>
+                    
+                </Item>
             </HTTPForm>
         )
     }
