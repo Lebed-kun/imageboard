@@ -4,6 +4,7 @@ import Router from 'next/router';
 import { Input, Button, Form, Checkbox, Row, Col } from 'antd';
 
 import HTTPForm from '../../../core/Form/Form.jsx';
+import RichText from '../../../core/RichText/RichText.jsx';
 
 import { BASE_REST_URL, EMAIL_REGEX, URL_REGEX } from '../../../constants.js';
 
@@ -16,6 +17,11 @@ class PostForm extends Component {
     }
 
     validateContact = (rule, value, next) => {
+        if (!value) {
+            next();
+            return;
+        }
+        
         const matchesEmail = value.match(EMAIL_REGEX);
         if (matchesEmail) {
             next();
@@ -29,6 +35,26 @@ class PostForm extends Component {
         }
 
         next(true);
+    }
+
+    richTextDecorator = component => {
+        const { getFieldDecorator } = this.props.form;
+        
+            return getFieldDecorator('message', {
+                initialValue : '',
+                rules : [
+                    {
+                        required : true,
+                        whitespace : true
+                    }
+                ]
+            })(component)
+    }
+
+    setRichTextValue = tag => {
+        const { setFieldsValue, getFieldValue } = this.props.form;
+        const value = getFieldValue('message');
+        setFieldsValue({ message : value + tag });
     }
 
     handleRequest = values => {
@@ -47,7 +73,22 @@ class PostForm extends Component {
 
     // TO DO : rich text field
     render() {
-        const getFieldDecorator = this.props.form.getFieldDecorator;
+        const { getFieldDecorator } = this.props.form;
+        
+        const tags = [
+            {
+                tag : 'b',
+                icon : '<b>B</b>'
+            },
+            {
+                tag : 'i',
+                icon : '<i>I</i>'
+            },
+            {
+                tag : 'u',
+                icon : '<u>U</u>'
+            }
+        ]
 
         return (
             <HTTPForm onRequest={this.handleRequest}>
@@ -100,8 +141,12 @@ class PostForm extends Component {
                     )}
                 </Item>
 
-                <Item>
-                    
+                <Item key="message">
+                    <RichText
+                        fieldDecorator={this.richTextDecorator}
+                        setValue={this.setRichTextValue}
+                        tags={tags}
+                    />
                 </Item>
             </HTTPForm>
         )
