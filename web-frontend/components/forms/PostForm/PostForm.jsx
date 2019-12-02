@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Router from 'next/router';
-import { Input, Button, Form, Checkbox, Row, Col } from 'antd';
+import { Input, Button, Form, Checkbox, Row, Col, Upload } from 'antd';
 
 import HTTPForm from '../../../core/Form/Form.jsx';
 import RichText from '../../../core/RichText/RichText.jsx';
 
+import tags from '../../../bb_tags/tags.js';
+
 import { BASE_REST_URL, EMAIL_REGEX, URL_REGEX } from '../../../constants.js';
 
-const Item = Form.Item;
+const { Item } = Form;
+const { Dragger } = Upload;
 
 class PostForm extends Component {
+    static MAX_MESSAGE_LENGTH = 15000;
+    
     getButtonTitle = () => {
         const thread = this.props.thread;
         return !thread ? 'Создать' : 'Отправить';
@@ -45,7 +50,8 @@ class PostForm extends Component {
                 rules : [
                     {
                         required : true,
-                        whitespace : true
+                        whitespace : true,
+                        max : PostForm.MAX_MESSAGE_LENGTH
                     }
                 ]
             })(component)
@@ -73,22 +79,7 @@ class PostForm extends Component {
 
     // TO DO : rich text field
     render() {
-        const { getFieldDecorator } = this.props.form;
-        
-        const tags = [
-            {
-                tag : 'b',
-                icon : '<b>B</b>'
-            },
-            {
-                tag : 'i',
-                icon : '<i>I</i>'
-            },
-            {
-                tag : 'u',
-                icon : '<u>U</u>'
-            }
-        ]
+        const { getFieldDecorator, getFieldValue } = this.props.form;
 
         return (
             <HTTPForm onRequest={this.handleRequest}>
@@ -146,7 +137,16 @@ class PostForm extends Component {
                         fieldDecorator={this.richTextDecorator}
                         setValue={this.setRichTextValue}
                         tags={tags}
+                        maxCount={PostForm.MAX_MESSAGE_LENGTH}
                     />
+                </Item>
+
+                <Item key="files">
+                    {getFieldDecorator('files')(
+                        <Dragger name="files" multiple={true}>
+                            ДОБАВЬТЕ СЮДА ФАЙЛЫ (не более 5 МБ общим весом, не более 4-х)
+                        </Dragger>
+                    )}
                 </Item>
             </HTTPForm>
         )

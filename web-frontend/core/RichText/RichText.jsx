@@ -5,6 +5,10 @@ const { TextArea } = Input;
 const { Header } = Layout;
 
 class RichText extends Component {
+    state = {
+        value : ''
+    }
+    
     addTag = e => {
         const tag = e.currentTarget.getAttribute('tag');
         const setValue = this.props.setValue;
@@ -14,16 +18,33 @@ class RichText extends Component {
     
     renderBar = () => {
         const tags = this.props.tags;
+
+        if (!tags) {
+            return null;
+        }
         
         return (
             <Header>
                 {tags.map((el, id) => (
                     <Button key={id} tag={el.tag} onClick={this.addTag}>
-                        <div dangerouslySetInnerHTML={{__html : el.icon}} />
+                        {el.icon}
                     </Button>
                 ))}
             </Header>
         )
+    }
+
+    handleChange = e => {
+        this.setState({
+            value : e.currentTarget.value
+        })
+    }
+
+    renderCounter = () => {
+        const maxCount = this.props.maxCount;
+        const currCount = this.state.value.length;
+
+        return maxCount ? <p>{currCount} / {maxCount}</p> : null;
     }
     
     render() {
@@ -33,7 +54,14 @@ class RichText extends Component {
             <div>
                 {this.renderBar()}
 
-                {fieldDecorator(<TextArea />)}
+                {fieldDecorator(
+                    <TextArea 
+                        style={{ height : '12rem' }}
+                        onChange={this.handleChange} 
+                    />
+                )}
+
+                {this.renderCounter()}
             </div>
         )
     }

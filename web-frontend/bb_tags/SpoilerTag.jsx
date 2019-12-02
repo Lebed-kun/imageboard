@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tag } from 'bbcode-to-react';
 
-import styles from './SpoilerTag.css';
+import styles from './SpoilerTag.less';
 
 class SpoilerTag extends Tag {
     toReact() {

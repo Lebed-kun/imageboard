@@ -4,8 +4,9 @@ import axios from 'axios';
 import { Layout } from 'antd';
 
 import Menu from '../components/views/Menu/Menu.jsx';
-
 import PostForm from '../components/forms/PostForm/PostForm.jsx'; 
+
+import registerTags from '../bb_tags/register.js';
 
 import { BASE_REST_URL } from '../constants.js';
 
@@ -38,6 +39,8 @@ const BoardsPage = props => {
 }
 
 BoardsPage.getInitialProps = async ({ query : { abbr }}) => {
+    registerTags();
+    
     let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
     boards = boards.data;
     
