@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Router from 'next/router';
-import { Input, Button, Form, Checkbox, Row, Col, Upload } from 'antd';
+import { Input, Button, Form, Checkbox, Row, Col, message } from 'antd';
 
 import HTTPForm from '../../../core/Form/Form.jsx';
 import RichText from '../../../core/RichText/RichText.jsx';
+import Upload from '../../../core/Uploader/Uploader.jsx';
 
 import tags from '../../../bb_tags/tags.js';
 
@@ -57,6 +58,23 @@ class PostForm extends Component {
             })(component)
     }
 
+    uploadDecorator = component => {
+        const { getFieldDecorator } = this.props.form;
+        
+        return getFieldDecorator('files', {
+            valuePropName : 'fileList',
+            getValueFromEvent : this.normFile
+        })(component);
+    }
+
+    normFile = e => {
+        if (Array.isArray(e)) {
+            return e;
+        }
+
+        return e && e.fileList;
+    }
+
     setRichTextValue = tag => {
         const { setFieldsValue, getFieldValue } = this.props.form;
         const value = getFieldValue('message');
@@ -77,12 +95,20 @@ class PostForm extends Component {
         return axios.post(url, values);
     }
 
+    handleResponse = response => {
+        const data = response.data;
+        message.success(`Тред #${data.id} создан!`);
+        setTimeout(() => {
+            // Router.push(`/threads/${data.id}/`)
+        }, 1000);
+    }
+
     // TO DO : rich text field
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
 
         return (
-            <HTTPForm onRequest={this.handleRequest}>
+            <HTTPForm onRequest={this.handleRequest} onRespose={this.handleResponse}>
                 <Row key="1">
                     <Col key="title">
                         <Item>
@@ -142,11 +168,10 @@ class PostForm extends Component {
                 </Item>
 
                 <Item key="files">
-                    {getFieldDecorator('files')(
-                        <Dragger name="files" multiple={true}>
-                            ДОБАВЬТЕ СЮДА ФАЙЛЫ (не более 5 МБ общим весом, не более 4-х)
-                        </Dragger>
-                    )}
+                    <Upload 
+                        fieldDecorator={this.uploadDecorator}
+                        accept=".jpg,.jpeg,.png,.gif,.mp4,.webm,.mp3,.ogg,.pdf,.djvu" 
+                    />
                 </Item>
             </HTTPForm>
         )

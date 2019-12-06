@@ -7,7 +7,7 @@ class HttpForm extends Component {
     }
 
     handleSubmit = e => {
-        e.preventTarget();
+        e.preventDefault();
 
         this.props.form.validateFields((err, values) => {
             if (!err) {
