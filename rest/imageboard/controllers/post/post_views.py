@@ -185,7 +185,7 @@ def create_thread(request, abbr, *args, **kwargs):
             return Response(data, status=status.HTTP_403_FORBIDDEN, content_type='application/json')
         
         thread = models.Thread.objects.create(board=board)
-        create_post(request, thread.id, *args, **kwargs)
+        create_post(request._request, thread.id, *args, **kwargs)
 
         data = {
             'created' : True,
