@@ -12,7 +12,6 @@ import tags from '../../../bb_tags/tags.js';
 import { BASE_REST_URL, EMAIL_REGEX, URL_REGEX } from '../../../constants.js';
 
 const { Item } = Form;
-const { Dragger } = Upload;
 
 class PostForm extends Component {
     static MAX_MESSAGE_LENGTH = 15000;
@@ -99,8 +98,14 @@ class PostForm extends Component {
         const data = response.data;
         message.success(`Тред #${data.id} создан!`);
         setTimeout(() => {
-            // Router.push(`/threads/${data.id}/`)
+            Router.push(`/threads/${data.id}/`)
         }, 1000);
+    }
+
+    initProps = {
+        form : this.props.form,
+        onRequest : this.handleRequest,
+        onResponse : this.handleResponse
     }
 
     // TO DO : rich text field
@@ -108,7 +113,7 @@ class PostForm extends Component {
         const { getFieldDecorator, getFieldValue } = this.props.form;
 
         return (
-            <HTTPForm onRequest={this.handleRequest} onRespose={this.handleResponse}>
+            <HTTPForm {...this.initProps}>
                 <Row key="1">
                     <Col key="title">
                         <Item>
@@ -178,4 +183,4 @@ class PostForm extends Component {
     }
 }
 
-export default Form.create({ name : 'create_post' })(PostForm);
+export default Form.create({ name : 'create_post '})(PostForm);

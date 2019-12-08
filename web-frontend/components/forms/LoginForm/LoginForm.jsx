@@ -20,12 +20,19 @@ class LoginForm extends Component {
         localStorage.setItem('token', token);
         Router.push('/');
     }
+
+    initProps = {
+        form : this.props.form,
+        title : "Вход в панель",
+        onRequest : this.handleRequest,
+        onResponse : this.handleResponse
+    }
     
     render() {
         const getFieldDecorator = this.props.form.getFieldDecorator;
 
         return (
-            <HTTPForm title="Вход" onRequest={this.handleRequest} onResponse={this.handleResponse}>
+            <HTTPForm {...this.initProps}>
                 <Item key="username">
                     {getFieldDecorator('username', {
                         rules : [

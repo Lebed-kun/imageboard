@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Card } from 'antd';
+import { Form } from 'antd';
 
 class HttpForm extends Component {
     state = {
@@ -33,13 +33,11 @@ class HttpForm extends Component {
     
     render() {
         return (
-            <Card title={this.props.title}>
+            <Form onSubmit={this.handleSubmit}>
                 {this.getErrorComponent()}
 
-                <Form onSubmit={this.handleSubmit}>
-                    {this.props.children}
-                </Form>
-            </Card>
+                {this.props.children}
+            </Form>
         )
     }
 }
