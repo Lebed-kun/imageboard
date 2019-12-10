@@ -39,6 +39,8 @@ const BoardsPage = props => {
 }
 
 BoardsPage.getInitialProps = async ({ query : { abbr }}) => {
+    console.log(abbr);
+
     registerTags();
     
     let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
