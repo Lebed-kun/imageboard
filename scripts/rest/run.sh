@@ -1,2 +1,2 @@
-source env/scripts/activate
+source rest/env/scripts/activate
 python rest/manage.py runserver
