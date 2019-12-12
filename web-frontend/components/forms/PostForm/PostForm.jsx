@@ -80,7 +80,31 @@ class PostForm extends Component {
         setFieldsValue({ message : value + tag });
     }
 
+    prepareOptions = values => {
+        if (!values.options) return;
+
+        const { getFieldValue } = this.props.form;
+        
+        let options = getFieldValue('options');
+        options = options.join(',');
+
+        values.options = options;
+    }
+
+    prepareFiles = values => {
+        const files = values.files.map(el => {
+            return {
+                name : el.name,
+                content : el.thumbUrl
+            }
+        });
+        values.files = files;
+    }
+
     handleRequest = values => {
+        this.prepareOptions(values);
+        this.prepareFiles(values);
+        console.log(values.files);
         let url = `${BASE_REST_URL}/main_post/`;
         
         const thread = this.props.thread;
@@ -156,10 +180,12 @@ class PostForm extends Component {
                 </Row>
 
                 <Item key="options">
-                    {getFieldDecorator('options[0]')(
-                        <Checkbox>
-                            Sage
-                        </Checkbox>
+                    {getFieldDecorator('options')(
+                        <Checkbox.Group>
+                            <Checkbox value="sage">
+                                Sage
+                            </Checkbox>
+                        </Checkbox.Group>
                     )}
                 </Item>
 

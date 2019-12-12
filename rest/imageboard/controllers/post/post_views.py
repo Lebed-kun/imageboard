@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 
 from ... import models
 from ... import constants
-from ...utils import get_visitor_ip
+from ...utils import get_visitor_ip, base64decode
 
 # Check ban methods
 def get_bans(visitor_ip, abbr):
@@ -107,7 +107,7 @@ def create_post(request, thread_id, *args, **kwargs):
             
             data['files'] = []
             for f in files:
-                file_data = ContentFile(base64.b64decode(f['content']), name=f['name'])
+                file_data = ContentFile(base64decode(f['content']), name=f['name'])
                 post_file = models.PostFile.objects.create(post_file=file_data, post=post)
                 data['files'].append({
                     'name' : post_file.get_file_name(),

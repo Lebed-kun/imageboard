@@ -48,7 +48,7 @@ class RichText extends Component {
     }
     
     render() {
-        const fieldDecorator = this.props.fieldDecorato || (component => component);
+        const fieldDecorator = this.props.fieldDecorator || (component => component);
 
         return (
             <div>
