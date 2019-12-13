@@ -4,7 +4,8 @@ import axios from 'axios';
 import { Layout } from 'antd';
 
 import Menu from '../components/views/Menu/Menu.jsx';
-import PostForm from '../components/forms/PostForm/PostForm.jsx'; 
+import PostForm from '../components/forms/PostForm/PostForm.jsx';
+import ThreadSearch from '../components/forms/ThreadSearch/ThreadSearch.jsx'; 
 
 import registerTags from '../bb_tags/register.js';
 
@@ -32,6 +33,8 @@ const BoardsPage = props => {
                     <h1>{props.board.name}</h1>
 
                     <PostForm board={props.board.abbr} />
+
+                    <ThreadSearch board={props.board} />
                 </Content>
             </Layout>
         </>
