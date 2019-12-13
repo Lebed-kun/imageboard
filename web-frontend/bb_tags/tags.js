@@ -18,7 +18,7 @@ const tags = [
         icon : <span style={{ textDecoration : 'line-through' }}>S</span>
     },
     {
-        tag : 'spolier',
+        tag : 'spoiler',
         icon : <span style={{ background : 'grey', color : 'transparent' }}>XXXX</span>
     }
 ];

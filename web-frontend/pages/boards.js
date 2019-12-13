@@ -6,8 +6,9 @@ import { Layout } from 'antd';
 import Menu from '../components/views/Menu/Menu.jsx';
 import PostForm from '../components/forms/PostForm/PostForm.jsx';
 import ThreadSearch from '../components/forms/ThreadSearch/ThreadSearch.jsx'; 
+import ThreadList from '../components/views/ThreadList/ThreadList.jsx';
 
-import registerTags from '../bb_tags/register.js';
+import Parser from '../bb_tags/register.js';
 
 import { BASE_REST_URL } from '../constants.js';
 
@@ -16,7 +17,10 @@ import 'antd/dist/antd.less';
 const { Header, Content } = Layout;
 
 const BoardsPage = props => {
-    // TO DO : search form and threads
+    // TO DO : pagination
+
+    Parser.registerTags();
+    console.log(Parser);
     
     return (
         <>
@@ -35,6 +39,10 @@ const BoardsPage = props => {
                     <PostForm board={props.board.abbr} />
 
                     <ThreadSearch board={props.board} />
+
+                    <ThreadList
+                        data={props.threads.results} 
+                    />
                 </Content>
             </Layout>
         </>
@@ -42,10 +50,6 @@ const BoardsPage = props => {
 }
 
 BoardsPage.getInitialProps = async ({ query : { abbr }}) => {
-    console.log(abbr);
-
-    registerTags();
-    
     let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
     boards = boards.data;
     

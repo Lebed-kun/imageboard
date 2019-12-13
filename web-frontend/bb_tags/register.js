@@ -4,10 +4,14 @@ import UnderlineTag from './UnderlineTag.jsx';
 import StrikeTag from './StrikeTag.jsx';
 import SpoilerTag from './SpoilerTag.jsx';
 
-const registerTags = () => {
-    parser.registerTag('u', UnderlineTag);
-    parser.registerTag('s', StrikeTag);
-    parser.registerTag('spoiler', SpoilerTag);
+const Parser = new parser.Parser();
+
+const registerTags = function() {
+    this.registerTag('u', UnderlineTag);
+    this.registerTag('s', StrikeTag);
+    this.registerTag('spoiler', SpoilerTag);
 }
 
-export default registerTags;
+Parser.registerTags = registerTags;
+
+export default Parser;
