@@ -103,7 +103,11 @@ class PostForm extends Component {
 
     handleRequest = values => {
         this.prepareOptions(values);
-        this.prepareFiles(values);
+        
+        if (values.files && values.files.length) {
+            this.prepareFiles(values);
+        }
+        
         let url = `${BASE_REST_URL}/main_post/`;
         
         const thread = this.props.thread;

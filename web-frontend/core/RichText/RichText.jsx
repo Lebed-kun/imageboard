@@ -37,7 +37,7 @@ class RichText extends Component {
     handleChange = e => {
         this.setState({
             value : e.currentTarget.value
-        })
+        });
     }
 
     renderCounter = () => {

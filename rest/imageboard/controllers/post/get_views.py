@@ -26,7 +26,7 @@ def get_post_data(post):
     files = models.PostFile.objects.filter(post=post)
     for post_file in files:
         data['files'].append({
-            'name' : post_file.post_file.get_file_name(),
+            'name' : post_file.get_file_name(),
             'url' : post_file.post_file.url
         })
     
