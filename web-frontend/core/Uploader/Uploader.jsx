@@ -6,7 +6,8 @@ const { Dragger } = Upload;
 class Uploader extends Component {
     state = {
         previewVisible : false,
-        previewImage : ''
+        previewImage : '',
+        files : []
     }
 
     getBase64 = file => {
@@ -31,6 +32,23 @@ class Uploader extends Component {
 
     handleCancel = () => this.setState({ previewVisible : false })
 
+    beforeUpload = (file, fileList) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.readAsDataURL(file);
+            reader.onload = e => {
+                file.content = e.target.result;
+                resolve(file);
+            };
+
+            reader.onerror = e => {
+                console.log(e.target.error);
+                reject(e.target.error);
+            }
+        })
+    }
+
     initProps = {
         multiple : true,
         listType : "picture-card",
@@ -40,7 +58,8 @@ class Uploader extends Component {
                 onSuccess("ok");
             }, 0);
         },
-        onPreview : this.handlePreview
+        beforeUpload : this.beforeUpload,
+        onPreview : this.handlePreview,
     }
 
     render() {

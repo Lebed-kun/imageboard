@@ -95,7 +95,7 @@ class PostForm extends Component {
         const files = values.files.map(el => {
             return {
                 name : el.name,
-                content : el.thumbUrl
+                content : el.content
             }
         });
         values.files = files;
@@ -104,7 +104,6 @@ class PostForm extends Component {
     handleRequest = values => {
         this.prepareOptions(values);
         this.prepareFiles(values);
-        console.log(values.files);
         let url = `${BASE_REST_URL}/main_post/`;
         
         const thread = this.props.thread;

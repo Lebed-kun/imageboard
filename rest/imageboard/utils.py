@@ -109,4 +109,7 @@ def full_text_found(fields, query):
     return condition
 
 def base64decode(data):
+    data = data.split(';base64,')
+    data = data[-1]
+    
     return base64.b64decode(data)
