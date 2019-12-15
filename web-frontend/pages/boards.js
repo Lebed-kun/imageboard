@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import axios from 'axios';
-import { Layout } from 'antd';
+import { Layout, Pagination } from 'antd';
 
 import Menu from '../components/views/Menu/Menu.jsx';
 import PostForm from '../components/forms/PostForm/PostForm.jsx';
@@ -13,6 +13,7 @@ import Parser from '../bb_tags/register.js';
 import { BASE_REST_URL } from '../constants.js';
 
 import 'antd/dist/antd.less';
+import { Router } from 'express';
 
 const { Header, Content } = Layout;
 
@@ -20,8 +21,12 @@ const BoardsPage = props => {
     // TO DO : pagination
 
     Parser.registerTags();
-    console.log(Parser);
-    
+
+    const threadsCount = BoardsPage.THREADS_PER_PAGE * props.threads.pages_count;
+    const handlePageChange = page => {
+        Router.push(`/boards/${props.board.abbr}?page=${page}`);
+    }
+
     return (
         <>
             <Head>
@@ -43,17 +48,27 @@ const BoardsPage = props => {
                     <ThreadList
                         data={props.threads.results} 
                     />
+
+                    <Pagination 
+                        total={threadsCount}
+                        pageSize={BoardsPage.THREADS_PER_PAGE}
+                        onChange={handlePageChange}
+                    />
                 </Content>
             </Layout>
         </>
     )
 }
 
-BoardsPage.getInitialProps = async ({ query : { abbr }}) => {
+BoardsPage.THREADS_PER_PAGE = 10;
+
+BoardsPage.getInitialProps = async ({ query : { abbr, page }}) => {
     let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
     boards = boards.data;
     
-    let threads = await axios.get(`${BASE_REST_URL}/main_get/boards/${abbr}/`);
+    let threadsUrl = `${BASE_REST_URL}/main_get/boards/${abbr}/`;
+    threadsUrl += page ? `?page=${page}` : '';
+    let threads = await axios.get(threadsUrl);
     threads = threads.data;
 
     const currBoard = threads.board;

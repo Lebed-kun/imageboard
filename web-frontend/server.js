@@ -10,7 +10,11 @@ app.prepare().then(() => {
     const server = express();
 
     server.get('/boards/:abbr', (req, res) => {
-        return app.render(req, res, '/boards', { abbr : req.params.abbr });
+        const query = {
+            abbr : req.params.abbr,
+            page : req.query.page
+        }
+        return app.render(req, res, '/boards', query);
     })
 
     server.all('*', (req, res) => {
