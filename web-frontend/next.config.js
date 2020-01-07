@@ -1,5 +1,6 @@
 /* eslint-disable */
-const withLess = require('@zeit/next-less')
+const withLess = require('@zeit/next-less');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = withLess({
   lessLoaderOptions: {
@@ -24,8 +25,11 @@ module.exports = withLess({
       config.module.rules.unshift({
         test: antStyles,
         use: 'null-loader',
-      })
+      });
+    } else {
+      config.externals = [nodeExternals()]
     }
+
     return config
   },
 })
