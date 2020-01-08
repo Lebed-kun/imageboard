@@ -2,18 +2,19 @@ import React from 'react';
 import Head from 'next/head';
 import axios from 'axios';
 import { Layout, Pagination } from 'antd';
+import Parser from '../bb_tags/register.js';
+import 'antd/dist/antd.less';
+import Router from 'next/router';
+import withRedux from 'next-redux-wrapper';
 
 import Menu from '../components/views/Menu/Menu.jsx';
 import PostForm from '../components/forms/PostForm/PostForm.jsx';
 import ThreadSearch from '../components/forms/ThreadSearch/ThreadSearch.jsx'; 
 import ThreadList from '../components/views/ThreadList/ThreadList.jsx';
 
-import Parser from '../bb_tags/register.js';
+import makeStore from '../store/store.js';
 
 import { BASE_REST_URL } from '../constants.js';
-
-import 'antd/dist/antd.less';
-import Router from 'next/router';
 
 const { Header, Content } = Layout;
 
