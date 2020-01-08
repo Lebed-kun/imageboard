@@ -13,7 +13,7 @@ import Parser from '../bb_tags/register.js';
 import { BASE_REST_URL } from '../constants.js';
 
 import 'antd/dist/antd.less';
-import { Router } from 'express';
+import Router from 'next/router';
 
 const { Header, Content } = Layout;
 
