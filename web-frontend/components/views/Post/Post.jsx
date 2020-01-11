@@ -40,7 +40,7 @@ class Post extends Component {
                 </Row>
 
                 <Row key="subheading">
-                    <a href={data.contact}>
+                    <a href={data.contact || null}>
                         {data.author || 'Аноним'}
                     </a>
 

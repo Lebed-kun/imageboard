@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
-import { Form } from 'antd';
 import axios from 'axios';
+import { connect } from 'react-redux';
 
 import SearchWrapper from '../../../core/Search/Search.jsx';
 
 import { BASE_REST_URL } from '../../../constants.js';
 
+import { changeSearchResults } from '../../../store/actions/actions.js';
+
 const Search = SearchWrapper('thread');
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changeThreads : threads => dispatch(changeSearchResults(threads))
+    }
+}
 
 class ThreadSearch extends Component {
     handleRequest = url => {
@@ -14,7 +22,8 @@ class ThreadSearch extends Component {
     }
 
     handleResponse = response => {
-        console.log(response);
+        const threads = response.data;
+        this.props.changeThreads(threads);
     }
 
     getUrl = () => {
@@ -33,4 +42,4 @@ class ThreadSearch extends Component {
     }
 }
 
-export default ThreadSearch;
+export default connect(null, mapDispatchToProps)(ThreadSearch);

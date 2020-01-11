@@ -1,7 +1,7 @@
 import { createStore } from 'redux';
 import reducer from './reducers/reducer.js';
 
-const makeStore = initState => {
+const makeStore = (initState) => {
     return createStore(reducer, initState)
 }
 

@@ -15,15 +15,19 @@ import ThreadList from '../components/views/ThreadList/ThreadList.jsx';
 import makeStore from '../store/store.js';
 
 import { BASE_REST_URL } from '../constants.js';
+import { changeSearchResults } from '../store/actions/actions.js';
 
 const { Header, Content } = Layout;
 
-const BoardsPage = props => {
+const THREADS_PER_PAGE = 10;
+
+let BoardsPage = props => {
     // TO DO : pagination
 
     Parser.registerTags();
 
-    const threadsCount = BoardsPage.THREADS_PER_PAGE * props.threads.pages_count;
+    const threadsCount = THREADS_PER_PAGE * props.threads.pages_count;
+
     const handlePageChange = page => {
         Router.push(`/boards/${props.board.abbr}?page=${page}`);
     }
@@ -52,7 +56,7 @@ const BoardsPage = props => {
 
                     <Pagination 
                         total={threadsCount}
-                        pageSize={BoardsPage.THREADS_PER_PAGE}
+                        pageSize={THREADS_PER_PAGE}
                         onChange={handlePageChange}
                     />
                 </Content>
@@ -63,7 +67,7 @@ const BoardsPage = props => {
 
 BoardsPage.THREADS_PER_PAGE = 10;
 
-BoardsPage.getInitialProps = async ({ query : { abbr, page }}) => {
+BoardsPage.getInitialProps = async ({ query : { abbr, page }, store }) => {
     let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
     boards = boards.data;
     
@@ -71,6 +75,8 @@ BoardsPage.getInitialProps = async ({ query : { abbr, page }}) => {
     threadsUrl += page ? `?page=${page}` : '';
     let threads = await axios.get(threadsUrl);
     threads = threads.data;
+
+    store.dispatch(changeSearchResults(threads));
 
     const currBoard = threads.board;
 
@@ -101,10 +107,14 @@ BoardsPage.getInitialProps = async ({ query : { abbr, page }}) => {
                     title : 'Техподдержка'
                 }
             ]
-        },
-
-        threads
+        }
     }
 }
+
+BoardsPage = withRedux(makeStore, state => {
+    return {
+        threads : state.threads
+    }
+})(BoardsPage);
 
 export default BoardsPage;
