@@ -26,6 +26,7 @@ class Post extends Component {
     card = () => {
         const data = this.props.data;
         const uid = this.props.uid;
+        const threadId = this.props.threadId;
         const options = this.prepareOptions(data.options);
         const files = this.prepareFiles(data.files);
 
@@ -34,7 +35,7 @@ class Post extends Component {
                 <Row key="heading">
                     <h3>{data.title.replace(/\[.+\]/g, '')}</h3>
 
-                    <Button>
+                    <Button href={`/threads/${threadId}`}>
                         Ответить
                     </Button>
                 </Row>

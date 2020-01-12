@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Router from 'next/router';
 import { Input, Button, Form, Checkbox, Row, Col, message } from 'antd';
+import { connect } from 'react-redux';
 
 import HTTPForm from '../../../core/Form/Form.jsx';
 import RichText from '../../../core/RichText/RichText.jsx';
@@ -11,9 +12,25 @@ import tags from '../../../bb_tags/tags.js';
 
 import { BASE_REST_URL, EMAIL_REGEX, URL_REGEX } from '../../../constants.js';
 
+import { changePosts } from '../../../store/actions/actions.js';
+
 const { Item } = Form;
 
+const mapStateToProps = state => {
+    return {
+        posts : state.posts
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changePosts : posts => dispatch(changePosts(posts))
+    }
+}
+
 class PostForm extends Component {
+    // TODO : hide form
+
     static MAX_MESSAGE_LENGTH = 15000;
     
     getButtonTitle = () => {
@@ -123,10 +140,22 @@ class PostForm extends Component {
 
     handleResponse = response => {
         const data = response.data;
-        message.success(`Тред #${data.id} создан!`);
-        setTimeout(() => {
-            Router.push(`/threads/${data.id}/`)
-        }, 1000);
+
+        const thread = this.props.thread;
+        const board = this.props.board;
+
+        if (thread) {
+            const posts = this.props.posts;
+            const newPosts = posts.concat([data])
+            this.props.changePosts(newPosts);
+
+            message.success(`Сообщение успешно отправлено!`)
+        } else {
+            message.success(`Тред #${data.id} создан!`);
+            setTimeout(() => {
+                Router.push(`/threads/${data.id}/`)
+            }, 1000);
+        }
     }
 
     initProps = {
@@ -212,4 +241,6 @@ class PostForm extends Component {
     }
 }
 
-export default Form.create({ name : 'create_post '})(PostForm);
+PostForm = Form.create({ name : 'create_post '})(PostForm);
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostForm);

@@ -9,26 +9,17 @@ import withRedux from 'next-redux-wrapper';
 
 import Menu from '../components/views/Menu/Menu.jsx';
 import PostForm from '../components/forms/PostForm/PostForm.jsx';
-import ThreadSearch from '../components/forms/ThreadSearch/ThreadSearch.jsx'; 
-import ThreadList from '../components/views/ThreadList/ThreadList.jsx';
+import Thread from '../components/views/Thread/Thread.jsx';
 
 import makeStore from '../store/store.js';
+import { changePosts } from '../store/actions/actions.js';
 
 import { BASE_REST_URL } from '../constants.js';
-import { changeSearchResults } from '../store/actions/actions.js';
 
 const { Header, Content } = Layout;
 
-const THREADS_PER_PAGE = 10;
-
-let BoardsPage = props => {
+let ThreadsPage = props => {
     Parser.registerTags();
-
-    const threadsCount = THREADS_PER_PAGE * props.threads.pages_count;
-
-    const handlePageChange = page => {
-        Router.push(`/boards/${props.board.abbr}?page=${page}`);
-    }
 
     return (
         <>
@@ -42,45 +33,30 @@ let BoardsPage = props => {
                 </Header>
 
                 <Content style={{ paddingTop : '72px' }}>
-                    <h1>{props.board.name}</h1>
+                    <PostForm key="up_form" thread={props.threadId} />
 
-                    <PostForm board={props.board.abbr} />
+                    <Thread data={props.posts} />
 
-                    <ThreadSearch board={props.board} />
-
-                    <ThreadList
-                        data={props.threads.results} 
-                    />
-
-                    <Pagination 
-                        total={threadsCount}
-                        pageSize={THREADS_PER_PAGE}
-                        onChange={handlePageChange}
-                    />
+                    <PostForm key="down_form" thread={props.threadId} />
                 </Content>
             </Layout>
         </>
     )
 }
 
-BoardsPage.THREADS_PER_PAGE = 10;
-
-BoardsPage.getInitialProps = async ({ query : { abbr, page }, store }) => {
+ThreadsPage.getInitialProps = async ({ query : { id }, store }) => {
     let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
     boards = boards.data;
-    
-    let threadsUrl = `${BASE_REST_URL}/main_get/boards/${abbr}/`;
-    threadsUrl += page ? `?page=${page}` : '';
-    let threads = await axios.get(threadsUrl);
-    threads = threads.data;
 
-    store.dispatch(changeSearchResults(threads));
+    const postsUrl = `${BASE_REST_URL}/main_get/threads/${id}/`;
+    let posts = await axios.get(postsUrl);
+    posts = posts.data;
 
-    const currBoard = threads.board;
+    store.dispatch(changePosts(posts));
 
     return {
-        board : currBoard,
-        title : `/${currBoard.abbr}/ ${currBoard.name}`,
+        title : `${posts[0].title}`,
+        threadId : id,
 
         menuLinks : {
             prev : [
@@ -109,10 +85,10 @@ BoardsPage.getInitialProps = async ({ query : { abbr, page }, store }) => {
     }
 }
 
-BoardsPage = withRedux(makeStore, state => {
+ThreadsPage = withRedux(makeStore, state => {
     return {
-        threads : state.threads
+        posts : state.posts
     }
-})(BoardsPage);
+})(ThreadsPage);
 
-export default BoardsPage;
+export default ThreadsPage;

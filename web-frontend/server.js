@@ -15,6 +15,13 @@ app.prepare().then(() => {
             page : req.query.page
         }
         return app.render(req, res, '/boards', query);
+    });
+
+    server.get('/threads/:id', (req, res) => {
+        const query = {
+            id : req.params.id
+        }
+        return app.render(req, res, '/threads', query);
     })
 
     server.all('*', (req, res) => {

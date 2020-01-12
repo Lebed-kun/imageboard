@@ -6,3 +6,10 @@ export const changeSearchResults = threads => {
         threads
     }
 }
+
+export const changePosts = posts => {
+    return {
+        type : actionTypes.CHANGE_POSTS,
+        posts
+    }
+}

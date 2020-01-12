@@ -6,9 +6,16 @@ const changeSearchResults = (state, action) => {
     })
 }
 
+const changePosts = (state, action) => {
+    return Object.assign({}, state, {
+        posts : action.posts
+    })
+}
+
 const reducer = () => {
     const handlers = {
         [actionTypes.CHANGE_SEARCH_RESULTS] : changeSearchResults,
+        [actionTypes.CHANGE_POSTS] : changePosts
     }
     
     return (state, action) => {
