@@ -1,12 +1,25 @@
 import React, { Component } from 'react';
-import { Card, Row, Button } from 'antd';
+import { Card, Row, Button, Modal } from 'antd';
 import Parser from '../../../bb_tags/register.js';
 
 import Preview from '../../../core/Preview/Preview.jsx';
+import ReportForm from '../../forms/ReportForm/ReportForm.jsx';
 
 import { BASE_URL } from '../../../constants.js';
 
 class Post extends Component {
+    state = {
+        reportVisible : false
+    }
+
+    modalOpen = () => {
+        this.setState({ reportVisible : true });
+    }
+
+    modalCancel = () => {
+        this.setState({ reportVisible : false })
+    }
+    
     prepareOptions = options => {
         return options.replace(',', ' ');
     }
@@ -53,7 +66,7 @@ class Post extends Component {
 
                     <p key="id">{data.id}</p>
 
-                    <Button>
+                    <Button onClick={this.modalOpen}>
                         Жалоба
                     </Button>
 
@@ -76,6 +89,13 @@ class Post extends Component {
                         )}
                     </p>
                 </Row>
+
+                <Modal visible={this.state.reportVisible} onCancel={this.modalCancel}>
+                    <ReportForm 
+                        threadId={threadId}
+                        postId={data.id}
+                    />
+                </Modal>
             </Card>
         )
     }

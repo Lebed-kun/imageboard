@@ -160,6 +160,7 @@ class PostForm extends Component {
 
     handleError = err => {
         message.error(err);
+        console.log(err);
     }
 
     initProps = {
@@ -169,7 +170,6 @@ class PostForm extends Component {
         onError : this.handleError
     }
 
-    // TO DO : rich text field
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
 
