@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Form } from 'antd';
 
 class HttpForm extends Component {
-    // TODO : handle error
-    
     state = {
         error : null
     }
@@ -19,10 +17,10 @@ class HttpForm extends Component {
                     return handleResponse(res);
                 })
                 .catch(err => {
-                    console.log(err);
-                    this.setState({
-                        error : err.message
-                    })
+                    const handleError = this.props.onError;
+                    if (handleError) {
+                        handleError(err);
+                    }
                 })
             }
         })

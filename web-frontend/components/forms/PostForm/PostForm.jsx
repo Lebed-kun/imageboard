@@ -158,10 +158,15 @@ class PostForm extends Component {
         }
     }
 
+    handleError = err => {
+        message.error(err);
+    }
+
     initProps = {
         form : this.props.form,
         onRequest : this.handleRequest,
-        onResponse : this.handleResponse
+        onResponse : this.handleResponse,
+        onError : this.handleError
     }
 
     // TO DO : rich text field
