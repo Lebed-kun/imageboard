@@ -10,14 +10,14 @@ class RichText extends Component {
     }
 
     formatTagParams = params => {
-        return params.reduce((result, param) => `${result} ${param}=""`, ' ');
+        return params.reduce((result, param) => `${result} ${param}=""`, '');
     }
     
     addTag = tagElement => {
         return () => {
             const { tag, params } = tagElement;
             const paramsString = params ? this.formatTagParams(params) : '';
-            
+
             const setValue = this.props.setValue;
             setValue(`[${tag}${paramsString}][/${tag}]`);
         }
