@@ -38,13 +38,12 @@ class Post extends Component {
     
     card = () => {
         const data = this.props.data;
-        const uid = this.props.uid;
         const threadId = this.props.threadId;
         const options = this.prepareOptions(data.options);
         const files = this.prepareFiles(data.files);
 
         return (
-            <Card>
+            <Card id={data.id}>
                 <Row key="heading">
                     <h3>{data.title.replace(/\[.+\]/g, '')}</h3>
 
@@ -61,8 +60,6 @@ class Post extends Component {
                     <p key="created_at">Создан: {data.created_at}</p>
 
                     <p key="updated_at">Изменен: {data.updated_at}</p>
-
-                    <p key="uid">{uid}</p>
 
                     <p key="id">{data.id}</p>
 

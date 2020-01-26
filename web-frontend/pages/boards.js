@@ -3,6 +3,7 @@ import Head from 'next/head';
 import axios from 'axios';
 import { Layout, Pagination } from 'antd';
 import Parser from '../bb_tags/register.js';
+import tags from '../bb_tags/tags.js';
 import 'antd/dist/antd.less';
 import Router from 'next/router';
 import withRedux from 'next-redux-wrapper';
@@ -22,7 +23,7 @@ const { Header, Content } = Layout;
 const THREADS_PER_PAGE = 10;
 
 let BoardsPage = props => {
-    Parser.registerTags();
+    Parser.registerTags(tags);
 
     const threadsCount = THREADS_PER_PAGE * props.threads.pages_count;
 

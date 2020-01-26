@@ -3,6 +3,7 @@ import Head from 'next/head';
 import axios from 'axios';
 import { Layout, Pagination } from 'antd';
 import Parser from '../bb_tags/register.js';
+import tags from '../bb_tags/tags.js';
 import 'antd/dist/antd.less';
 import Router from 'next/router';
 import withRedux from 'next-redux-wrapper';
@@ -19,7 +20,7 @@ import { BASE_REST_URL } from '../constants.js';
 const { Header, Content } = Layout;
 
 let ThreadsPage = props => {
-    Parser.registerTags();
+    Parser.registerTags(tags);
 
     return (
         <>

@@ -30,9 +30,9 @@ class Thread extends Component {
                     Показано {lastPosts.length} последних постов. Нажмите <a href={`/threads/${id}/`}>здесь</a> чтобы посмотреть весь тред
                 </p>
 
-                {lastPosts.map((el, id) => (
+                {lastPosts.map((el, i) => (
                     <Post 
-                        key={id}
+                        key={i}
                         data={el}
                         threadId={id}
                     />
