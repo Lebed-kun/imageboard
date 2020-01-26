@@ -64,8 +64,6 @@ let BoardsPage = props => {
     )
 }
 
-BoardsPage.THREADS_PER_PAGE = 10;
-
 BoardsPage.getInitialProps = async ({ query : { abbr, page }, store }) => {
     let boards = await axios.get(`${BASE_REST_URL}/main_get/`);
     boards = boards.data;
