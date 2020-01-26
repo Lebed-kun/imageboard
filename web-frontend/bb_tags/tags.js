@@ -33,7 +33,8 @@ const tags = [
     {
         tag : 'link',
         icon : <span style={{ textDecoration : 'underline', color : 'orange' }}>Link</span>,
-        component : LinkTag
+        component : LinkTag,
+        params : ['href']
     },
     {
         tag : 'quote',

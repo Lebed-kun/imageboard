@@ -8,12 +8,19 @@ class RichText extends Component {
     state = {
         value : ''
     }
+
+    formatTagParams = params => {
+        return params.reduce((result, param) => `${result} ${param}=""`, ' ');
+    }
     
-    addTag = e => {
-        const tag = e.currentTarget.getAttribute('tag');
-        const setValue = this.props.setValue;
-        
-        setValue(`[${tag}][/${tag}]`);
+    addTag = tagElement => {
+        return () => {
+            const { tag, params } = tagElement;
+            const paramsString = params ? this.formatTagParams(params) : '';
+            
+            const setValue = this.props.setValue;
+            setValue(`[${tag}${paramsString}][/${tag}]`);
+        }
     }
     
     renderBar = () => {
@@ -26,7 +33,7 @@ class RichText extends Component {
         return (
             <Header>
                 {tags.map((el, id) => (
-                    <Button key={id} tag={el.tag} onClick={this.addTag}>
+                    <Button key={id} onClick={this.addTag(el)}>
                         {el.icon}
                     </Button>
                 ))}
