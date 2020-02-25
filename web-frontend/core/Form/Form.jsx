@@ -17,10 +17,10 @@ class HttpForm extends Component {
                     return handleResponse(res);
                 })
                 .catch(err => {
-                    console.log(err);
-                    this.setState({
-                        error : err.message
-                    })
+                    const handleError = this.props.onError;
+                    if (handleError) {
+                        handleError(err);
+                    }
                 })
             }
         })
@@ -30,10 +30,15 @@ class HttpForm extends Component {
         const message = this.state.error;
         return message ? <p>{message}</p> : null;
     }
+
+    initProps = {
+        onSubmit : this.handleSubmit,
+        mode : this.props.mode || 'horizontal'
+    }
     
     render() {
         return (
-            <Form onSubmit={this.handleSubmit}>
+            <Form {...this.initProps}>
                 {this.getErrorComponent()}
 
                 {this.props.children}

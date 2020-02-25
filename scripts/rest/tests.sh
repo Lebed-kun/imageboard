@@ -2,7 +2,7 @@ execute_test() {
     python rest/manage.py test imageboard.tests.$1.$2   
 }
 
-source env/scripts/activate
+source rest/env/scripts/activate
 
 if [ $# == 1 ]; then
     for file in $(ls server/*/tests/$1); do

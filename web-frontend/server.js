@@ -1,7 +1,7 @@
 const express = require('express');
 const next = require('next');
 
-const port = +process.env.PORT || 3000;
+const port = +process.env.PORT || 3001;
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -10,7 +10,18 @@ app.prepare().then(() => {
     const server = express();
 
     server.get('/boards/:abbr', (req, res) => {
-        return app.render(req, res, '/boards', { abbr : req.params.abbr });
+        const query = {
+            abbr : req.params.abbr,
+            page : req.query.page
+        }
+        return app.render(req, res, '/boards', query);
+    });
+
+    server.get('/threads/:id', (req, res) => {
+        const query = {
+            id : req.params.id
+        }
+        return app.render(req, res, '/threads', query);
     })
 
     server.all('*', (req, res) => {

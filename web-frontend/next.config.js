@@ -1,5 +1,5 @@
 /* eslint-disable */
-const withLess = require('@zeit/next-less')
+const withLess = require('@zeit/next-less');
 
 module.exports = withLess({
   lessLoaderOptions: {
@@ -24,8 +24,9 @@ module.exports = withLess({
       config.module.rules.unshift({
         test: antStyles,
         use: 'null-loader',
-      })
+      });
     }
+
     return config
   },
 })

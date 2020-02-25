@@ -1,4 +1,6 @@
 import random
+import base64
+import re
 from hashlib import sha1, md5, sha256
 from django.db.models import Q
 
@@ -105,3 +107,9 @@ def full_text_found(fields, query):
             })
 
     return condition
+
+def base64decode(data):
+    data = data.split(';base64,')
+    data = data[-1]
+    
+    return base64.b64decode(data)

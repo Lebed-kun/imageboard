@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Router from 'next/router';
 import { Input, Button, Form, Checkbox, Row, Col, message } from 'antd';
+import { connect } from 'react-redux';
 
 import HTTPForm from '../../../core/Form/Form.jsx';
 import RichText from '../../../core/RichText/RichText.jsx';
@@ -11,9 +12,25 @@ import tags from '../../../bb_tags/tags.js';
 
 import { BASE_REST_URL, EMAIL_REGEX, URL_REGEX } from '../../../constants.js';
 
+import { changePosts } from '../../../store/actions/actions.js';
+
 const { Item } = Form;
 
+const mapStateToProps = state => {
+    return {
+        posts : state.posts
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changePosts : posts => dispatch(changePosts(posts))
+    }
+}
+
 class PostForm extends Component {
+    // TODO : hide form
+
     static MAX_MESSAGE_LENGTH = 15000;
     
     getButtonTitle = () => {
@@ -80,7 +97,34 @@ class PostForm extends Component {
         setFieldsValue({ message : value + tag });
     }
 
+    prepareOptions = values => {
+        if (!values.options) return;
+
+        const { getFieldValue } = this.props.form;
+        
+        let options = getFieldValue('options');
+        options = options.join(',');
+
+        values.options = options;
+    }
+
+    prepareFiles = values => {
+        const files = values.files.map(el => {
+            return {
+                name : el.name,
+                content : el.content
+            }
+        });
+        values.files = files;
+    }
+
     handleRequest = values => {
+        this.prepareOptions(values);
+        
+        if (values.files && values.files.length) {
+            this.prepareFiles(values);
+        }
+        
         let url = `${BASE_REST_URL}/main_post/`;
         
         const thread = this.props.thread;
@@ -96,19 +140,36 @@ class PostForm extends Component {
 
     handleResponse = response => {
         const data = response.data;
-        message.success(`Тред #${data.id} создан!`);
-        setTimeout(() => {
-            Router.push(`/threads/${data.id}/`)
-        }, 1000);
+
+        const thread = this.props.thread;
+        const board = this.props.board;
+
+        if (thread) {
+            const posts = this.props.posts;
+            const newPosts = posts.concat([data])
+            this.props.changePosts(newPosts);
+
+            message.success(`Сообщение успешно отправлено!`)
+        } else {
+            message.success(`Тред #${data.id} создан!`);
+            setTimeout(() => {
+                Router.push(`/threads/${data.id}/`)
+            }, 1000);
+        }
+    }
+
+    handleError = err => {
+        message.error(err);
+        console.log(err);
     }
 
     initProps = {
         form : this.props.form,
         onRequest : this.handleRequest,
-        onResponse : this.handleResponse
+        onResponse : this.handleResponse,
+        onError : this.handleError
     }
 
-    // TO DO : rich text field
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
 
@@ -156,10 +217,12 @@ class PostForm extends Component {
                 </Row>
 
                 <Item key="options">
-                    {getFieldDecorator('options[0]')(
-                        <Checkbox>
-                            Sage
-                        </Checkbox>
+                    {getFieldDecorator('options')(
+                        <Checkbox.Group>
+                            <Checkbox value="sage">
+                                Sage
+                            </Checkbox>
+                        </Checkbox.Group>
                     )}
                 </Item>
 
@@ -183,4 +246,6 @@ class PostForm extends Component {
     }
 }
 
-export default Form.create({ name : 'create_post '})(PostForm);
+PostForm = Form.create({ name : 'create_post '})(PostForm);
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostForm);
