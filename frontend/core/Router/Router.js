@@ -1,4 +1,4 @@
-import { isEmpty } from "../isEmpty/isEmpty";
+import { isEmpty } from "../isEmpty/isEmpty.js";
 
 /**
  * @typedef {import('./Route').Route} Route
@@ -6,9 +6,9 @@ import { isEmpty } from "../isEmpty/isEmpty";
 
 /**
  * @param  {...Route} routes
- * @returns {(path : string, query ?: string) => any}
+ * @returns {(path : string, query ?: string, context ?: Object) => any}
  */
-const Router = (...routes) => (path, query) => {
+const Router = (...routes) => (path, query, context) => {
   path = path.split("/").filter(str => str);
   query = !isEmpty(query)
     ? query
@@ -37,9 +37,9 @@ const Router = (...routes) => (path, query) => {
     });
 
     if (params && routes[i].exact) {
-      return routes[i].handle(params, query);
+      return routes[i].handle(params, query, context);
     } else if (params) {
-      const res = routes[i].handle(params, query);
+      const res = routes[i].handle(params, query, context);
       if (!isEmpty(res)) {
         results.push(res);
       }

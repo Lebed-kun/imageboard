@@ -1,4 +1,4 @@
-import Router from "./Router";
+import Router from "./Router.js";
 
 /**
  * @typedef {import('./Route').Route} Route
@@ -6,7 +6,7 @@ import Router from "./Router";
 
 /**
  * @param  {...Route} routes
- * @returns {() => any}
+ * @returns {(context ?: Object) => any}
  */
 const ClientRouter = (...routes) =>
   Router.apply(null, routes).bind(

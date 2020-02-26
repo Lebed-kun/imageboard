@@ -7,11 +7,13 @@ import Menu from '../../components/Menu/Menu.jsx';
 
 const Board = ({ boards, userboardsService, support }) => (
     <>
-        <Menu 
-            boards={boards}
-            userboardsService={userboardsService}
-            support={support}
-        />
+        <div id="menu">
+            <Menu 
+                boards={boards}
+                userboardsService={userboardsService}
+                support={support}
+            />
+        </div>
     </>
 );
 
