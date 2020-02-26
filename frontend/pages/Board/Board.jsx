@@ -5,12 +5,12 @@ import { BASE_REST_URL } from '../../config.js';
 
 import Menu from '../../components/Menu/Menu.jsx';
 
-const Board = ({ boards, userboardsService, support }) => (
+const Board = ({ boards, userboardService, support }) => (
     <>
         <div id="menu">
             <Menu 
                 boards={boards}
-                userboardsService={userboardsService}
+                userboardService={userboardService}
                 support={support}
             />
         </div>
@@ -19,8 +19,8 @@ const Board = ({ boards, userboardsService, support }) => (
 
 Board.getInitialProps = async ({ abbr }) => {
     try {
-        const boards = await axios.get(`${BASE_REST_URL}/main_get/`);
-        return { boards, userboardsService : {
+        const response = await axios.get(`${BASE_REST_URL}/main_get/`);
+        return { boards : response.data, userboardService : {
             key : 'userboards',
             link : '/userboards/',
             title : 'Юзердоски'
