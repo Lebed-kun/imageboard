@@ -22,10 +22,9 @@ const handleSelectBoard = value => window.location.pathname = value;
  * 
  * @returns {React.ReactElement}  
  */
-const CustomMenu = ({ boards, userboardService, support }) => (
+const CustomMenu = ({ boards, userboardService, support, currentLink }) => (
             <Header>
-                <Menu mode="inline">
-                    <Select onChange={isClient() ? handleSelectBoard : null}>
+                <Select onChange={isClient() ? handleSelectBoard : null} defaultValue={currentLink}>
                         {boards.map((el, id) => (
                             <Option key={id} value={`/boards/${el.abbr}`}>
                                 /{el.abbr}/ - {el.name}
@@ -40,7 +39,6 @@ const CustomMenu = ({ boards, userboardService, support }) => (
                             {support.title}
                         </Option>
                     </Select>
-                </Menu>
             </Header>
 )
 

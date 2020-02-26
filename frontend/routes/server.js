@@ -2,31 +2,29 @@ import { Route, Router as ServerRouter } from '../core/Router/index.js';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import fs from 'fs';
+import path from 'path';
 
 import Page from '../pages/base.js';
 import Board from '../pages/Board/Board.jsx';
 
 const router = ServerRouter(
-    Route('/', (params, query, { req, res, next }) => {
+    /* Route('/', (params, query, { req, res }) => {
         res.writeHead(301, {
             Location : `http${req.socket.encrypted ? 's' : ''}://${req.headers.host}/boards/lrk`
         });
-        next();
-    }),
+    }), */
     Route('/static/*', (params, query, { req, res }) => {
-        fs.readFile(__dirname + req.url, 'utf-8', (err, data) => {
-            res.setHeader('Content-type', 'application/javascript');
+        fs.readFile(path.join(__dirname, `../${req.url.slice(1)}`), 'utf-8', (err, data) => {
             res.write(data);
             res.end();
         })
     }, true),
-    Route('/boards/:abbr', async ({ abbr }, query, { res, next }) => {
-        const initProps = await Board.getInitialProps({ abbr });
-        const page = Page(`/${abbr}/`, ReactDOMServer.renderToString(<Board {...initProps}/>), {
-            menu : initProps
+    Route('/boards/:abbr', ({ abbr }, query, { res }) => {
+        Board.getInitialProps({ abbr }).then(initProps => {
+            const page = Page(`/${abbr}/`, ReactDOMServer.renderToString(<Board {...initProps}/>), initProps);
+            res.write(page);
+            res.end();
         });
-        res.write(page);
-        next();
     }, true)
 )
 

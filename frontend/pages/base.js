@@ -10,9 +10,10 @@ const Page = (title, content, preloadedState) => `
         <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <meta name="viewport" content="width=\, initial-scale=1.0">
+                <meta name="viewport" content="initial-scale=1.0">
                 <meta http-equiv="X-UA-Compatible" content="ie=edge">
                 <title>${title}</title>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.26.12/antd.css">
             </head>
             <body>
                 ${content}

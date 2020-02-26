@@ -2,6 +2,7 @@ const path = require("path");
 
 module.exports = {
   entry: "./client.js",
+  mode : 'development',
   output: {
     path: path.join(__dirname, "/static/js/"),
     filename: "app.js"

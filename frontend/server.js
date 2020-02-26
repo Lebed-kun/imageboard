@@ -2,13 +2,13 @@ import http from 'http';
 
 import router from './routes/server.js';
 
-const server = http.createServer((req, res, next) => {
+const server = http.createServer((req, res) => {
     try {
         const [path, query] = req.url.split('?');
-        router.apply(null, [path, query, { req, res, next }]);
+        router.apply(null, [path, query, { req, res }]);
     } catch (err) {
         res.statusCode = 500;
-        res.write(err);
+        res.write(err.stack);
         res.end();
     }
 });

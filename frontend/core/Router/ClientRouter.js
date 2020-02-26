@@ -1,4 +1,4 @@
-import Router from "./Router.js";
+import Router from "./Router";
 
 /**
  * @typedef {import('./Route').Route} Route
@@ -8,11 +8,7 @@ import Router from "./Router.js";
  * @param  {...Route} routes
  * @returns {(context ?: Object) => any}
  */
-const ClientRouter = (...routes) =>
-  Router.apply(null, routes).bind(
-    null,
-    window.location.pathname,
-    window.location.search
-  );
+const ClientRouter = (...routes) => context =>
+  Router(...routes)(window.location.pathname, window.location.search, context);
 
 export default ClientRouter;
