@@ -22,8 +22,8 @@ const handleSelectBoard = value => window.location.pathname = value;
  * 
  * @returns {React.ReactElement}  
  */
-const CustomMenu = ({ boards, userboardService, support, currentLink }) => (
-            <Header>
+const CustomMenu = ({ boards, userboardService, support, currentLink, ...props }) => (
+            <Header {...props}>
                 <Select onChange={isClient() ? handleSelectBoard : null} defaultValue={currentLink}>
                         {boards.map((el, id) => (
                             <Option key={id} value={`/boards/${el.abbr}`}>
