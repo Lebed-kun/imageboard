@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card } from 'antd';
 
+import { BASE_BACKEND_URL } from '../../config.js';
+
 const hElementStyle = {
     display : 'inline-block'
 }
@@ -28,6 +30,14 @@ const hElementStyle = {
  */
 const getAuthor = data => data.author || 'Аноним';
 
+const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+/**
+ * 
+ * @param {string} contact
+ * @returns {boolean} 
+ */
+const isEmail = contact => EMAIL_REGEX.test(contact);
+
 /**
  * @param {Object} param0
  * @property {Post} data 
@@ -46,7 +56,7 @@ const Post = ({ data, threadId, sticked, responses, ...props }) => (
             <p style={hElementStyle}>
                 {
                     data.contact ? (
-                        <a href={data.contact}>
+                        <a href={isEmail(data.contact) ? `mailto:${data.contact}` : data.contact}>
                             {getAuthor(data)}
                         </a>
                     ) : getAuthor(data)
@@ -71,7 +81,7 @@ const Post = ({ data, threadId, sticked, responses, ...props }) => (
         <div key="files">
             {!!data.files && data.files.map((el, id) => (
                 <Card key={id} style={hElementStyle}>
-                    <img src={el.url} />
+                    <img src={`${BASE_BACKEND_URL}${el.url}`} width="200" height="200" />
                     <p>{el.name}</p>
                 </Card>
             ))}

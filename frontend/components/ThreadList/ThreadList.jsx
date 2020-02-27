@@ -18,6 +18,7 @@ const ThreadList = ({ data }) => data.map((el, id) => (
     <Thread 
         key={id}
         data={el}
+        style={{ borderBottom : '3px solid black', paddingBottom : '12px' }}
     />
 ))
 

@@ -19,9 +19,9 @@ const router = ServerRouter(
             res.end();
         })
     }, true),
-    Route('/boards/:abbr', ({ abbr }, query, { res }) => {
-        Board.getInitialProps({ abbr }).then(initProps => {
-            const page = Page(`/${abbr}/`, ReactDOMServer.renderToString(<Board {...initProps}/>), initProps);
+    Route('/boards/:abbr', ({ abbr }, { page }, { res }) => {
+        Board.getInitialProps({ abbr, page }).then(initProps => {
+            const page = Page(`/${initProps.board.board.abbr}/ - ${initProps.board.board.name}`, ReactDOMServer.renderToString(<Board {...initProps}/>), initProps);
             res.write(page);
             res.end();
         });

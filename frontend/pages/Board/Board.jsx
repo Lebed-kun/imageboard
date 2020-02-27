@@ -1,25 +1,44 @@
 import React from 'react';
 import axios from 'axios';
+import { Pagination } from 'antd';
 
 import { BASE_REST_URL } from '../../config.js';
 
 import Menu from '../../components/Menu/Menu.jsx';
+import ThreadList from '../../components/ThreadList/ThreadList.jsx';
 
-const Board = ({ menu }) => (
+const THREADS_PER_PAGE = 10;
+
+const Board = ({ menu, board, currentPage }) => (
     <>
         <div id="menu">
             <Menu 
                 {...menu}
             />
         </div>
+
+        <ThreadList 
+            data={board.results}
+        />
+
+        {board.pages_count > 1 ? (
+            <div id="pagination">
+                <Pagination 
+                    total={board.pages_count * THREADS_PER_PAGE}
+                    pageSize={THREADS_PER_PAGE}
+                    current={currentPage}
+                />
+            </div>
+        ) : null}
     </>
 );
 
-Board.getInitialProps = async ({ abbr }) => {
+Board.getInitialProps = async ({ abbr, page = 1 }) => {
     try {
-        const response = await axios.get(`${BASE_REST_URL}/main_get/`);
+        const boardsResponse = await axios.get(`${BASE_REST_URL}/main_get/`);
+        const threadsResponse = await axios.get(`${BASE_REST_URL}/main_get/boards/${abbr}/?page=${page}`);
         return {
-            menu : { boards : response.data, userboardService : {
+            menu : { boards : boardsResponse.data, userboardService : {
                 key : 'userboards',
                 link : '/userboards/',
                 title : 'Юзердоски'
@@ -27,7 +46,9 @@ Board.getInitialProps = async ({ abbr }) => {
                 key : 'support',
                 link : '/support/',
                 title : 'Поддержка'
-            }, currentLink : `/boards/${abbr}`}
+            }, currentLink : `/boards/${abbr}`},
+            board : threadsResponse.data,
+            currentPage : page
         };
     } catch (err) {
         console.log(err);
