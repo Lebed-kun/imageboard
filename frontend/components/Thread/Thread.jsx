@@ -29,7 +29,7 @@ export const THREAD_MODES = {
  * 
  * @returns {React.ReactElement}
  */
-const Thread = ({ data, mode = THREAD_MODES.DEFAULT_THREAD, ...props }) => (
+const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, ...props }) => (
     <div {...props}>
         {mode === THREAD_MODES.DEFAULT_THREAD && (
             <>
@@ -59,7 +59,7 @@ const Thread = ({ data, mode = THREAD_MODES.DEFAULT_THREAD, ...props }) => (
             <Post 
                 key={id}
                 data={el}
-                threadId={data.id}
+                threadId={threadId}
                 sticked={id === 0 && data.sticked}
             />
         ))}

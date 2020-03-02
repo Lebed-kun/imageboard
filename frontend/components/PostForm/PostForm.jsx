@@ -75,6 +75,7 @@ const PostForm = ({ form, mode = POST_FORM_MODES.CREATE_THREAD, boardAbbr, threa
                     message.success(`Тред #${response.data.id} успешно создан!`);
                     setTimeout(() => window.location.href = `/threads/${response.data.id}`, 2000);
                 } else {
+                    message('Сообщение отправлено!');
                     addPost(response.data);
                 }
             } catch (err) {

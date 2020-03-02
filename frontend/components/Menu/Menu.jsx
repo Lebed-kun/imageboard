@@ -1,14 +1,8 @@
 import React from 'react';
-import { Layout, Menu, Select } from 'antd';
-import { isClient } from '../../core/isClient/isClient.js';
+import { Layout, Menu } from 'antd';
 
 const { Header } = Layout;
-const { Option } = Select;
-
-/**
- * @param {string} value 
- */
-const handleSelectBoard = value => window.location.pathname = value;
+const { SubMenu } = Menu;
 
 /**
  * @typedef {Object} Board
@@ -24,21 +18,29 @@ const handleSelectBoard = value => window.location.pathname = value;
  */
 const CustomMenu = ({ boards, userboardService, support, currentLink, ...props }) => (
             <Header {...props}>
-                <Select onChange={isClient() ? handleSelectBoard : null} defaultValue={currentLink}>
+                <Menu mode="horizontal">
+                    <SubMenu title="Доски">
                         {boards.map((el, id) => (
-                            <Option key={id} value={`/boards/${el.abbr}`}>
-                                /{el.abbr}/ - {el.name}
-                            </Option>
+                            <Menu.Item key={id}>
+                                <a href={`/boards/${el.abbr}`}>
+                                    /{el.abbr}/ - {el.name}
+                                </a>
+                            </Menu.Item>
                         ))}
+                    </SubMenu>
 
-                        <Option key={userboardService.key} value={userboardService.link}>
+                    <Menu.Item key={userboardService.key}>
+                        <a href={userboardService.link}>
                             {userboardService.title}
-                        </Option>
+                        </a>
+                    </Menu.Item>
 
-                        <Option key={support.key} value={support.link}>
+                    <Menu.Item key={support.key}>
+                        <a href={support.link}>
                             {support.title}
-                        </Option>
-                    </Select>
+                        </a>
+                    </Menu.Item>
+                </Menu>
             </Header>
 )
 

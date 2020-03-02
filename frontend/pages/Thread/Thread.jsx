@@ -18,7 +18,7 @@ const Thread = ({ menu, thread, threadId }) => (
         </div>
 
         <div id="thread">
-            <ThreadView mode={THREAD_MODES.FULL_THREAD} data={thread} />
+            <ThreadView mode={THREAD_MODES.FULL_THREAD} data={thread} threadId={threadId}/>
         </div>
     </>
 )

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
 
 import { BASE_BACKEND_URL } from '../../config.js';
 
@@ -49,7 +49,7 @@ const isEmail = contact => EMAIL_REGEX.test(contact);
  * @returns {React.ReactElement}
  */
 const Post = ({ data, threadId, sticked, responses, ...props }) => (
-    <Card {...props}>
+    <Card id={`post_${data.id}`} {...props}>
         <div>
             <h3 style={hElementStyle}>{data.title}</h3>
             от
@@ -63,7 +63,7 @@ const Post = ({ data, threadId, sticked, responses, ...props }) => (
                 }
             </p>
 
-            <a>
+            <a href={`/threads/${threadId}#post_${data.id}`}>
                 #{data.id}
             </a>
         </div>
