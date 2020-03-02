@@ -57,7 +57,7 @@ const beforeUpload = file => {
  * 
  * @returns {React.ReactElement} 
  */
-const PostForm = ({ form, mode = POST_FORM_MODES.CREATE_THREAD, boardAbbr, threadId, ...props }) => {
+const PostForm = ({ form, mode = POST_FORM_MODES.CREATE_THREAD, boardAbbr, threadId, addPost, ...props }) => {
     const formProps = () => ({
         name : 'post',
         initialValues : {
@@ -74,6 +74,8 @@ const PostForm = ({ form, mode = POST_FORM_MODES.CREATE_THREAD, boardAbbr, threa
                 if (boardAbbr) {
                     message.success(`Тред #${response.data.id} успешно создан!`);
                     setTimeout(() => window.location.href = `/threads/${response.data.id}`, 2000);
+                } else {
+                    addPost(response.data);
                 }
             } catch (err) {
                 message.error(err);
