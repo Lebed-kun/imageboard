@@ -15,18 +15,18 @@ const router = ClientRouter(
         const THREADS_PER_PAGE = 10;
         const { menu, board, currentPage } = window.__PRELOADED_STATE__;
         
-        ReactDOM.hydrate(<Menu {...menu} />, document.getElementById('menu'));
-        ReactDOM.hydrate(<PostForm boardAbbr={abbr} />, document.getElementById('form'));
+        setTimeout(() => ReactDOM.hydrate(<Menu {...menu} />, document.getElementById('menu')));
+        setTimeout(() => ReactDOM.hydrate(<PostForm boardAbbr={abbr} />, document.getElementById('form')));
         
         if (board.pages_count > 1) {
-            ReactDOM.hydrate((
+            setTimeout(() => ReactDOM.hydrate((
                 <Pagination 
                     total={board.pages_count * THREADS_PER_PAGE}
                     pageSize={THREADS_PER_PAGE}
                     current={currentPage}
                     onChange={page => window.location.href = `/boards/${abbr}?page=${page}`}
                 />
-            ), document.getElementById('pagination'));
+            ), document.getElementById('pagination')));
         }
     }),
     Route('/threads/:id', () => {
@@ -51,17 +51,17 @@ const router = ClientRouter(
             data : state.posts
         }), null)(Thread);
 
-        ReactDOM.hydrate(<Menu {...menu} />, document.getElementById('menu'));
-        ReactDOM.hydrate((
+        setTimeout(() => ReactDOM.hydrate(<Menu {...menu} />, document.getElementById('menu')));
+        setTimeout(() => ReactDOM.hydrate((
             <Provider store={store}>
                 <WrapPostForm mode={formModes.CREATE_POST} threadId={threadId} />
             </Provider>
-        ), document.getElementById('form'));
-        ReactDOM.hydrate((
+        ), document.getElementById('form')));
+        setTimeout(() => ReactDOM.hydrate((
             <Provider store={store}>
                 <WrapThread mode={THREAD_MODES.FULL_THREAD} threadId={threadId} />
             </Provider>
-        ), document.getElementById('thread'));
+        ), document.getElementById('thread')));
     })
 )
 
