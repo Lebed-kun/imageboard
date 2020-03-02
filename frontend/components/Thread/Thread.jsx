@@ -6,7 +6,7 @@ import Post from '../Post/Post.jsx';
  * @typedef {import('../Post/Post.jsx')} Post
  */
 
-const THREAD_MODES = {
+export const THREAD_MODES = {
     DEFAULT_THREAD : 'DEFAULT_THREAD', // Thread with first and last posts
     FULL_THREAD : 'FULL_THREAD' // Thread with all its posts
 }

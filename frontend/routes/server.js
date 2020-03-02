@@ -6,6 +6,7 @@ import path from 'path';
 
 import Page from '../pages/base.js';
 import Board from '../pages/Board/Board.jsx';
+import Thread from '../pages/Thread/Thread.jsx';
 
 const router = ServerRouter(
     /* Route('/', (params, query, { req, res }) => {
@@ -25,7 +26,14 @@ const router = ServerRouter(
             res.write(page);
             res.end();
         });
-    }, true)
+    }, true),
+    Route('/threads/:id', ({ id }, q, { res }) => {
+        Thread.getInitialProps({ threadId : id }).then(initProps => {
+            const page = Page(initProps.thread[0].title, ReactDOMServer.renderToString(<Thread {...initProps}/>), initProps);
+            res.write(page);
+            res.end();
+        })
+    })
 )
 
 export default router;
