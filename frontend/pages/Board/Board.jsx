@@ -6,6 +6,7 @@ import { BASE_REST_URL } from '../../config.js';
 
 import Menu from '../../components/Menu/Menu.jsx';
 import ThreadList from '../../components/ThreadList/ThreadList.jsx';
+import Form from '../../components/PostForm/PostForm.jsx';
 
 const THREADS_PER_PAGE = 10;
 
@@ -15,6 +16,10 @@ const Board = ({ menu, board, currentPage }) => (
             <Menu 
                 {...menu}
             />
+        </div>
+
+        <div id="form">
+            <Form boardAbbr={board.board.abbr} />
         </div>
 
         <ThreadList 

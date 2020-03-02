@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { Pagination } from 'antd';
 
 import Menu from '../components/Menu/Menu.jsx';
+import Form from '../components/PostForm/PostForm.jsx';
 
 const router = ClientRouter(
     Route('/boards/:abbr', ({ abbr }) => {
@@ -11,6 +12,7 @@ const router = ClientRouter(
         const { menu, board, currentPage } = window.__PRELOADED_STATE__;
         
         ReactDOM.hydrate(<Menu {...menu} />, document.getElementById('menu'));
+        ReactDOM.hydrate(<Form boardAbbr={abbr} />, document.getElementById('form'));
         
         if (board.pages_count > 1) {
             ReactDOM.hydrate((
