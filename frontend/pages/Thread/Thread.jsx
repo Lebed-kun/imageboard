@@ -5,7 +5,8 @@ import { BASE_REST_URL } from '../../config.js';
 
 import Menu from '../../components/Menu/Menu.jsx';
 import Form, { POST_FORM_MODES as formModes } from '../../components/PostForm/PostForm.jsx';
-import ThreadView, { THREAD_MODES } from '../../components/Thread/Thread.jsx';
+import ThreadView from '../../components/Thread/Thread.jsx';
+import THREAD_MODES from '../../components/Thread/thread_modes.js';
 
 const Thread = ({ menu, thread, threadId }) => (
     <>

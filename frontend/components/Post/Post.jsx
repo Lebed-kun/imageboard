@@ -58,7 +58,7 @@ const postLink = (threadMode, postId, threadId) => `${threadMode === THREAD_MODE
  * 
  * @returns {React.ReactElement}
  */
-const Post = ({ data, threadId, threadMode, sticked, responses, ...props }) => (
+const Post = ({ data, threadId, threadMode, sticked, ...props }) => (
     <Card id={data.id} {...props}>
         <div>
             <h3 style={hElementStyle}>{data.title}</h3>
@@ -101,10 +101,10 @@ const Post = ({ data, threadId, threadMode, sticked, responses, ...props }) => (
             {data.message}
         </p>
 
-        {!!responses && (
+        {!!data.responses && (
             <div key="responses">
                 Ответы: 
-                {responses.map((el, id) => (
+                {data.responses.map((el, id) => (
                     <a key={id} href={postLink(threadMode, el, threadId)}>
                         {`>>${el}`}
                     </a>

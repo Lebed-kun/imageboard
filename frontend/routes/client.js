@@ -5,10 +5,12 @@ import { Pagination } from 'antd';
 import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 import makeReducer from '../core/makeReducer/makeReducer.js';
+import { connectNodes } from '../core/connectNodes/connectNodes.js';
 
 import Menu from '../components/Menu/Menu.jsx';
 import PostForm, { POST_FORM_MODES as formModes } from '../components/PostForm/PostForm.jsx';
-import Thread, { THREAD_MODES } from '../components/Thread/Thread.jsx';
+import Thread from '../components/Thread/Thread.jsx';
+import THREAD_MODES from '../components/Thread/thread_modes.js';
 
 const router = ClientRouter(
     Route('/boards/:abbr', ({ abbr }) => {
@@ -32,6 +34,11 @@ const router = ClientRouter(
     Route('/threads/:id', () => {
         const { menu, thread, threadId } = window.__PRELOADED_STATE__;
 
+        connectNodes(
+            { idProp : 'id', textProp : 'message', linkProp : 'responses' }, 
+            /(?<=>>)[0-9]+/g
+        )(thread);
+
         const store = createStore(makeReducer({
             'ADD_POST' : (state, action) => ({
                 posts : state.posts.concat([action.payload])
@@ -49,7 +56,7 @@ const router = ClientRouter(
 
         const WrapThread = connect(state => ({
             data : state.posts
-        }), null)(Thread);
+        }))(Thread);
 
         setTimeout(() => ReactDOM.hydrate(<Menu {...menu} />, document.getElementById('menu')));
         setTimeout(() => ReactDOM.hydrate((
