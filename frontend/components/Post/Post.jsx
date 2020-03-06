@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Button } from 'antd';
 
 import { BASE_BACKEND_URL } from '../../config.js';
+import THREAD_MODES from '../Thread/thread_modes.js';
 
 const hElementStyle = {
     display : 'inline-block'
@@ -39,6 +40,15 @@ const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const isEmail = contact => EMAIL_REGEX.test(contact);
 
 /**
+ * 
+ * @param {string} threadMode 
+ * @param {number} postId 
+ * @param {?number} threadId
+ * @returns {string} 
+ */
+const postLink = (threadMode, postId, threadId) => `${threadMode === THREAD_MODES.DEFAULT_THREAD ? `/threads/${threadId}` : ''}#${postId}`;
+
+/**
  * @param {Object} param0
  * @property {Post} data 
  * @property {number} threadId
@@ -48,8 +58,8 @@ const isEmail = contact => EMAIL_REGEX.test(contact);
  * 
  * @returns {React.ReactElement}
  */
-const Post = ({ data, threadId, sticked, responses, ...props }) => (
-    <Card id={`post_${data.id}`} {...props}>
+const Post = ({ data, threadId, threadMode, sticked, responses, ...props }) => (
+    <Card id={data.id} {...props}>
         <div>
             <h3 style={hElementStyle}>{data.title}</h3>
             от
@@ -63,7 +73,7 @@ const Post = ({ data, threadId, sticked, responses, ...props }) => (
                 }
             </p>
 
-            <a href={`/threads/${threadId}#post_${data.id}`}>
+            <a href={postLink(threadMode, data.id, threadId)}>
                 #{data.id}
             </a>
         </div>
@@ -95,7 +105,7 @@ const Post = ({ data, threadId, sticked, responses, ...props }) => (
             <div key="responses">
                 Ответы: 
                 {responses.map((el, id) => (
-                    <a key={id} href={`/threads/${threadId}#${el}`}>
+                    <a key={id} href={postLink(threadMode, el, threadId)}>
                         {`>>${el}`}
                     </a>
                 ))}

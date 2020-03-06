@@ -1,15 +1,11 @@
 import React from 'react';
 
 import Post from '../Post/Post.jsx';
+import THREAD_MODES from './thread_modes.js';
 
 /**
  * @typedef {import('../Post/Post.jsx')} Post
  */
-
-export const THREAD_MODES = {
-    DEFAULT_THREAD : 'DEFAULT_THREAD', // Thread with first and last posts
-    FULL_THREAD : 'FULL_THREAD' // Thread with all its posts
-}
 
 /**
  * @typedef {Object} Thread
@@ -38,6 +34,7 @@ const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, ...props }
                     data={data.first_post}
                     threadId={data.id}
                     sticked={data.sticked}
+                    threadMode={mode}
                 />
 
                 {!!data.last_posts.length && (
@@ -48,6 +45,7 @@ const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, ...props }
                                 key={id + 1}
                                 data={posts[posts.length - 1 - id]}
                                 threadId={data.id}
+                                threadMode={mode}
                             />
                         ))}
                     </>
@@ -61,6 +59,7 @@ const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, ...props }
                 data={el}
                 threadId={threadId}
                 sticked={id === 0 && data.sticked}
+                threadMode={mode}
             />
         ))}
     </div>
