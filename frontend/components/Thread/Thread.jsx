@@ -26,7 +26,7 @@ import THREAD_MODES from './thread_modes.js';
  * 
  * @returns {React.ReactElement}
  */
-const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, appendLink, ...props }) => (
+const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, appendLink, selectPost, ...props }) => (
     <div {...props}>
         {mode === THREAD_MODES.DEFAULT_THREAD && (
             <>
@@ -62,6 +62,7 @@ const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, appendLink
                 sticked={id === 0 && data.sticked}
                 threadMode={mode}
                 appendLink={appendLink}
+                selectPost={selectPost}
             />
         ))}
     </div>

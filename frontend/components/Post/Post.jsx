@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button } from 'antd';
+import { Card, Checkbox } from 'antd';
 
 import { BASE_BACKEND_URL } from '../../config.js';
 import THREAD_MODES from '../Thread/thread_modes.js';
@@ -60,9 +60,10 @@ const postLink = (threadMode, postId, threadId) => `${threadMode === THREAD_MODE
  * 
  * @returns {React.ReactElement}
  */
-const Post = ({ data, threadId, threadMode, sticked, appendLink, ...props }) => (
+const Post = ({ data, threadId, threadMode, sticked, appendLink, selectPost, ...props }) => (
     <Card id={data.id} {...props}>
         <div>
+            <Checkbox onChange={e => selectPost(data.id, e.currentTarget.value)} />
             <h3 style={hElementStyle}>{data.title}</h3>
             от
             <p style={hElementStyle}>
@@ -79,6 +80,10 @@ const Post = ({ data, threadId, threadMode, sticked, appendLink, ...props }) => 
             onClick={appendLink ? () => appendLink(data.id) : null}
             >
                 #{data.id}
+            </a>
+
+            <a onClick={}>
+                Пожаловаться
             </a>
         </div>
 

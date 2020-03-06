@@ -47,10 +47,22 @@ const router = ClientRouter(
             'APPEND_POST_LINK' : (state, action) => ({
                 ...state,
                 newPostLink : action.payload
+            }),
+            'SELECT_POST' : (state, action) => ({
+                ...state,
+                selectedPosts: {
+                    ...state.selectedPosts,
+                    [action.payload.id] : action.payload.value
+                }
+            }),
+            'CLEAR_SELECTIONS' : state => ({
+                ...state,
+                selectedPosts: {}
             })
         }), {
             posts : thread,
-            newPostLink : ''
+            newPostLink : '',
+            selectedPosts : {}
         });
 
         const WrapPostForm = connect(state => ({
@@ -68,6 +80,13 @@ const router = ClientRouter(
             appendLink : postId => dispatch({
                 type: 'APPEND_POST_LINK',
                 payload: `>>${postId}`
+            }),
+            selectPost : (id, value) => dispatch({
+                type : 'SELECT_POST',
+                payload : {
+                    id,
+                    value
+                }
             })
         }))(Thread);
 
