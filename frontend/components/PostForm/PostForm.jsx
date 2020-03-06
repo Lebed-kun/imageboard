@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { Form, Input, Checkbox, Upload, Button, Row, Col, message } from 'antd'
 
@@ -57,7 +57,17 @@ const beforeUpload = file => {
  * 
  * @returns {React.ReactElement} 
  */
-const PostForm = ({ form, mode = POST_FORM_MODES.CREATE_THREAD, boardAbbr, threadId, addPost, ...props }) => {
+const PostForm = ({ mode = POST_FORM_MODES.CREATE_THREAD, boardAbbr, threadId, addPost, newPostLink, ...props }) => {
+    const [form] = Form.useForm();
+    
+    useEffect(() => {
+        if (newPostLink) {
+            const message = form.getFieldValue('message');
+            form.setFieldsValue({ message :  message + ` ${newPostLink}`});
+        }
+    }, [newPostLink]);
+
+
     const formProps = () => ({
         name : 'post',
         initialValues : {
@@ -86,7 +96,7 @@ const PostForm = ({ form, mode = POST_FORM_MODES.CREATE_THREAD, boardAbbr, threa
     })
     
     return (
-        <Form {...formProps()} {...props}>
+        <Form form={form} {...formProps()} {...props}>
             <Form.Item name="title">
                 <Input 
                     name="title"

@@ -41,13 +41,21 @@ const router = ClientRouter(
 
         const store = createStore(makeReducer({
             'ADD_POST' : (state, action) => ({
+                ...state,
                 posts : state.posts.concat([action.payload])
+            }),
+            'APPEND_POST_LINK' : (state, action) => ({
+                ...state,
+                newPostLink : action.payload
             })
         }), {
-            posts : thread
+            posts : thread,
+            newPostLink : ''
         });
 
-        const WrapPostForm = connect(null, dispatch => ({
+        const WrapPostForm = connect(state => ({
+            newPostLink : state.newPostLink
+        }), dispatch => ({
             addPost : post => dispatch({
                 type: 'ADD_POST',
                 payload: post
@@ -56,6 +64,11 @@ const router = ClientRouter(
 
         const WrapThread = connect(state => ({
             data : state.posts
+        }), dispatch => ({
+            appendLink : postId => dispatch({
+                type: 'APPEND_POST_LINK',
+                payload: `>>${postId}`
+            })
         }))(Thread);
 
         setTimeout(() => ReactDOM.hydrate(<Menu {...menu} />, document.getElementById('menu')));

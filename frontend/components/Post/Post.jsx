@@ -52,13 +52,15 @@ const postLink = (threadMode, postId, threadId) => `${threadMode === THREAD_MODE
  * @param {Object} param0
  * @property {Post} data 
  * @property {number} threadId
+ * @property {string} threadMode Defines type of link for post: either full path to this post, or anchor within thread
  * @property {boolean} sticked
+ * @property {postId : number => void} appendLink
  * @property {Array<number>} responses
  * @property {...any} props
  * 
  * @returns {React.ReactElement}
  */
-const Post = ({ data, threadId, threadMode, sticked, ...props }) => (
+const Post = ({ data, threadId, threadMode, sticked, appendLink, ...props }) => (
     <Card id={data.id} {...props}>
         <div>
             <h3 style={hElementStyle}>{data.title}</h3>
@@ -73,7 +75,9 @@ const Post = ({ data, threadId, threadMode, sticked, ...props }) => (
                 }
             </p>
 
-            <a href={postLink(threadMode, data.id, threadId)}>
+            <a href={postLink(threadMode, data.id, threadId)} 
+            onClick={appendLink ? () => appendLink(data.id) : null}
+            >
                 #{data.id}
             </a>
         </div>

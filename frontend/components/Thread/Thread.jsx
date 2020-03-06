@@ -20,12 +20,13 @@ import THREAD_MODES from './thread_modes.js';
  * 
  * @param {Object} param0 
  * @property {Thread|Array<Post>} data
+ * @property {postId : number => void} appendLink
  * @property {?string} mode
  * @property {...any} props
  * 
  * @returns {React.ReactElement}
  */
-const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, ...props }) => (
+const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, appendLink, ...props }) => (
     <div {...props}>
         {mode === THREAD_MODES.DEFAULT_THREAD && (
             <>
@@ -60,6 +61,7 @@ const Thread = ({ data, threadId, mode = THREAD_MODES.DEFAULT_THREAD, ...props }
                 threadId={threadId}
                 sticked={id === 0 && data.sticked}
                 threadMode={mode}
+                appendLink={appendLink}
             />
         ))}
     </div>
